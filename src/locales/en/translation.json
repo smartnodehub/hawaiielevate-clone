@@ -1,0 +1,68 @@
+{
+  "site_title": "Hawaii Thrive Initiative",
+  "site_subtitle": "Online Directory of Local Businesses",
+  "search_placeholder": "Search by business name or tag",
+  "select_category": "Select Category",
+  "all_counties": "All Counties",
+  "search_button": "Search",
+  "welcome_title": "Welcome to Hawaii Thrive!",
+  "welcome_subtitle": "A Brand New Business Directory for Hawaii Local Businesses",
+  "browse_categories": "Browse Business Categories",
+  "featured_businesses": "Featured Businesses",
+  "ready_to_grow": "Ready to Grow Your Business?",
+  "grow_description": "Join thousands of Hawaii businesses already listed on our directory",
+  "add_business_now": "Add Your Business Now",
+  "add_new_business": "Add Business",
+  "login_register": "Login",
+  "navigation": {
+    "home": "Home",
+    "restaurants": "Restaurants",
+    "interior_designers": "Design",
+    "bed_breakfast": "Hotels",
+    "things_to_do": "Tours",
+    "pricing": "Pricing",
+    "about": "About"
+  },
+  "categories": {
+    "restaurants": {
+      "title": "Restaurants",
+      "description": "Discover the best dining experiences across Hawaii",
+      "action": "Browse Restaurants"
+    },
+    "interior_designers": {
+      "title": "Interior Designers",
+      "description": "Transform your space with top interior design professionals",
+      "action": "Find Designers"
+    },
+    "bed_breakfast": {
+      "title": "Bed & Breakfast",
+      "description": "Cozy accommodations with authentic Hawaiian hospitality",
+      "action": "Book Stay"
+    },
+    "things_to_do": {
+      "title": "Things To Do",
+      "description": "Explore activities, tours, and attractions in Hawaii",
+      "action": "Explore Activities"
+    },
+    "home_services": {
+      "title": "Home Services",
+      "description": "Professional home improvement and maintenance services",
+      "action": "Find Services"
+    },
+    "local_businesses": {
+      "title": "Local Businesses",
+      "description": "Support local Hawaiian businesses and entrepreneurs",
+      "action": "Browse All"
+    }
+  },
+  "footer": {
+    "description": "Your premier directory for Hawaii's local businesses and services.",
+    "categories_title": "Categories",
+    "business_title": "Business",
+    "contact_title": "Contact",
+    "add_business": "Add Your Business",
+    "business_login": "Business Login",
+    "support": "Support",
+    "copyright": "© 2025 Hawaii Thrive Initiative. All rights reserved."
+  }
+} 

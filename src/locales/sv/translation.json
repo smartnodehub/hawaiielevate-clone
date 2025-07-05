@@ -1,0 +1,68 @@
+{
+  "site_title": "Hawaii Thrive Initiative",
+  "site_subtitle": "Företagskatalog på Hawaii",
+  "search_placeholder": "Sök efter företagsnamn eller tagg",
+  "select_category": "Välj kategori",
+  "all_counties": "Alla landskap",
+  "search_button": "Sök",
+  "welcome_title": "Välkommen till Hawaii Thrive!",
+  "welcome_subtitle": "En helt ny företagskatalog för lokala hawaiianska företag",
+  "browse_categories": "Bläddra bland företagskategorier",
+  "featured_businesses": "Utvalda företag",
+  "ready_to_grow": "Redo att utveckla ditt företag?",
+  "grow_description": "Gå med i tusentals Hawaii-företag som redan är listade i vår katalog",
+  "add_business_now": "Lägg till ditt företag nu",
+  "add_new_business": "Lägg till",
+  "login_register": "Logga in",
+  "navigation": {
+    "home": "Hem",
+    "restaurants": "Restauranger",
+    "interior_designers": "Design",
+    "bed_breakfast": "Hotell",
+    "things_to_do": "Turer",
+    "pricing": "Priser",
+    "about": "Om oss"
+  },
+  "categories": {
+    "restaurants": {
+      "title": "Restauranger",
+      "description": "Upptäck de bästa matupplevelserna på Hawaii",
+      "action": "Bläddra bland restauranger"
+    },
+    "interior_designers": {
+      "title": "Inredningsdesigners",
+      "description": "Förvandla ditt utrymme med topprofessionella inredningsdesigners",
+      "action": "Hitta designers"
+    },
+    "bed_breakfast": {
+      "title": "Bed & Breakfast",
+      "description": "Mysiga boenden med äkta hawaiiansk gästfrihet",
+      "action": "Boka vistelse"
+    },
+    "things_to_do": {
+      "title": "Saker att göra",
+      "description": "Utforska aktiviteter, turer och attraktioner på Hawaii",
+      "action": "Utforska aktiviteter"
+    },
+    "home_services": {
+      "title": "Hemtjänster",
+      "description": "Professionella hemförbättrings- och underhållstjänster",
+      "action": "Hitta tjänster"
+    },
+    "local_businesses": {
+      "title": "Lokala företag",
+      "description": "Stöd lokala hawaiianska företag och entreprenörer",
+      "action": "Bläddra bland alla"
+    }
+  },
+  "footer": {
+    "description": "Din främsta katalog för Hawaiis lokala företag och tjänster.",
+    "categories_title": "Kategorier",
+    "business_title": "Företag",
+    "contact_title": "Kontakt",
+    "add_business": "Lägg till ditt företag",
+    "business_login": "Företagsinloggning",
+    "support": "Support",
+    "copyright": "© 2025 Hawaii Thrive Initiative. Alla rättigheter förbehållna."
+  }
+} 

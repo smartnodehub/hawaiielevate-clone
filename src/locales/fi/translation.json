@@ -1,0 +1,68 @@
+{
+  "site_title": "Hawaii Thrive Initiative",
+  "site_subtitle": "Yrityshaku Hawaiilla",
+  "search_placeholder": "Hae yrityksen nimellä tai tägillä",
+  "select_category": "Valitse kategoria",
+  "all_counties": "Kaikki maakunnat",
+  "search_button": "Hae",
+  "welcome_title": "Tervetuloa Hawaii Thrive -palveluun!",
+  "welcome_subtitle": "Täysin uusi yrityshakemisto Havaijin paikallisyrityksille",
+  "browse_categories": "Selaa yritysluokkia",
+  "featured_businesses": "Esillä olevat yritykset",
+  "ready_to_grow": "Valmis kasvattamaan yritystäsi?",
+  "grow_description": "Liity tuhansiin Havaijin yrityksiin, jotka on jo listattu hakemistossamme",
+  "add_business_now": "Lisää yrityksesi nyt",
+  "add_new_business": "Lisää yritys",
+  "login_register": "Kirjaudu",
+  "navigation": {
+    "home": "Koti",
+    "restaurants": "Ravintolat",
+    "interior_designers": "Sisustus",
+    "bed_breakfast": "Hotellit",
+    "things_to_do": "Kierrokset",
+    "pricing": "Hinnat",
+    "about": "Tietoa"
+  },
+  "categories": {
+    "restaurants": {
+      "title": "Ravintolat",
+      "description": "Löydä Havaijin parhaat ruokailukokemukset",
+      "action": "Selaa ravintoloita"
+    },
+    "interior_designers": {
+      "title": "Sisustussuunnittelijat",
+      "description": "Muuta tilasi huippusisustusalan ammattilaisten avulla",
+      "action": "Löydä suunnittelijoita"
+    },
+    "bed_breakfast": {
+      "title": "Bed & Breakfast",
+      "description": "Viihtyisät majoitukset aidolla havaijilaisella vieraanvaraisuudella",
+      "action": "Varaa yöpyminen"
+    },
+    "things_to_do": {
+      "title": "Tekemistä",
+      "description": "Tutustu aktiviteetteihin, kierroksiin ja nähtävyyksiin Havaijilla",
+      "action": "Tutustu aktiviteetteihin"
+    },
+    "home_services": {
+      "title": "Kotipalvelut",
+      "description": "Ammattimaiset kodin kunnostus- ja huoltopalvelut",
+      "action": "Löydä palveluja"
+    },
+    "local_businesses": {
+      "title": "Paikalliset yritykset",
+      "description": "Tue paikallisia havaijilaisia yrityksiä ja yrittäjiä",
+      "action": "Selaa kaikkia"
+    }
+  },
+  "footer": {
+    "description": "Johtava hakemisto Havaijin paikallisyrityksille ja -palveluille.",
+    "categories_title": "Kategoriat",
+    "business_title": "Yrityksille",
+    "contact_title": "Yhteystiedot",
+    "add_business": "Lisää yrityksesi",
+    "business_login": "Yrityskirjautuminen",
+    "support": "Tuki",
+    "copyright": "© 2025 Hawaii Thrive Initiative. Kaikki oikeudet pidätetään."
+  }
+} 
