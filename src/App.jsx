@@ -321,8 +321,6 @@ const HomePage = () => {
             </nav>
 
             <div className="flex items-center space-x-4">
-              <span className="text-sm">📞 (808) 555-0123</span>
-              
               {/* Language Switcher */}
               <div className="relative" ref={languageDropdownRef}>
                 <button
@@ -565,10 +563,6 @@ const HomePage = () => {
             <div>
               <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
               <div className="space-y-2 text-gray-400">
-                <p className="flex items-center">
-                  <Phone size={16} className="mr-2" />
-                  (808) 555-0123
-                </p>
                 <p className="flex items-center">
                   <Mail size={16} className="mr-2" />
                   info@yrittajapolku.com
