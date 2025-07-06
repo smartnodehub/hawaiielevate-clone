@@ -1,0 +1,158 @@
+{
+  "header": {
+    "home": "Home",
+    "homeServices": "Home Services",
+    "restaurants": "Restaurants",
+    "interiorDesigners": "Interior Designers",
+    "bedBreakfast": "Bed & Breakfast",
+    "thingsToDo": "Things To Do",
+    "pricing": "Pricing",
+    "aboutUs": "About Us",
+    "contact": "Contact"
+  },
+  "nav": {
+    "home": "Home",
+    "restaurants": "Restaurants",
+    "hotels": "Hotels",
+    "tours": "Tours",
+    "shopping": "Shopping",
+    "services": "Services",
+    "realestate": "Real Estate",
+    "bb": "B&B",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "about": "About",
+    "addBusiness": "Add Business"
+  },
+  "hero": {
+    "title": "Yrittäjäpolku",
+    "subtitle": "Business Search in Finland",
+    "searchPlaceholder": "Search for businesses...",
+    "allMunicipalities": "All Municipalities",
+    "allCategories": "All Categories",
+    "searchButton": "Search"
+  },
+  "welcome": {
+    "title": "Welcome to Yrittäjäpolku",
+    "description": "Find the best businesses and services in Finland. Browse our comprehensive business directory."
+  },
+  "categories": {
+    "restaurants": "Restaurants",
+    "hotels": "Hotels",
+    "tours": "Tours",
+    "shopping": "Shopping",
+    "services": "Services",
+    "realEstate": "Real Estate"
+  },
+  "businessesByTags": {
+    "title": "Businesses by Tags",
+    "seeAllListings": "See All Listings",
+    "bigIslandActivities": "Helsinki Activities",
+    "kauaiRestaurants": "Tampere Restaurants",
+    "mauiRestaurants": "Turku Restaurants",
+    "mauiShopLocal": "Oulu Shop Local",
+    "oahuRestaurants": "Espoo Restaurants"
+  },
+  "pricing": {
+    "title": "Choose Your Perfect Plan From Us",
+    "monthly": "Monthly",
+    "annually": "Annually",
+    "plans": {
+      "free": {
+        "name": "FREE",
+        "price": "FREE",
+        "period": "Monthly",
+        "button": "ADD YOUR BUSINESS"
+      },
+      "capitalPremium": {
+        "name": "Capital Premium Plus",
+        "price": "$45",
+        "period": "Monthly",
+        "button": "Buy Now"
+      },
+      "goldenPremium": {
+        "name": "Golden Premium",
+        "price": "$20",
+        "period": "Monthly",
+        "button": "Buy Now"
+      }
+    },
+    "features": {
+      "blogs": "Blogs",
+      "events": "Events",
+      "jobs": "Jobs",
+      "newsFeeds": "News Feeds",
+      "businessDescription": "Business Description",
+      "additionalDetails": "Additional Details",
+      "address": "Address",
+      "phone": "Phone",
+      "website": "Website",
+      "emailAddress": "Email Address",
+      "featuredImage": "Featured Image",
+      "teams": "Teams",
+      "googleMapConfiguration": "Google Map Configuration",
+      "reviews": "Reviews",
+      "googleReviews": "Google Reviews",
+      "businessHourConfigurations": "Business Hour Configurations",
+      "video": "Video",
+      "googlePlaceImages": "Google Place Images",
+      "companyLogo": "Company Logo",
+      "extraLinks": "Extra Links",
+      "socialMedia": "Social Media",
+      "featuredBlogArticle": "1 Featured Blog/News Article Each month",
+      "onlineVisibilityReport": "Online Visibility Report",
+      "googleBusinessProfileOptimization": "Google Business Profile Optimization",
+      "aiSocialPosts": "5 AI Social Posts",
+      "aiVideos": "5 AI Videos",
+      "value75": "($75 Value)",
+      "value99": "($99 Value)",
+      "value299": "($299 Value)"
+    }
+  },
+  "modal": {
+    "title": "Add Your Business",
+    "businessName": "Business Name",
+    "businessNamePlaceholder": "Enter business name",
+    "category": "Category",
+    "categoryPlaceholder": "Select category",
+    "municipality": "Municipality",
+    "municipalityPlaceholder": "Select municipality",
+    "address": "Address",
+    "addressPlaceholder": "Enter address",
+    "phone": "Phone Number",
+    "phonePlaceholder": "Enter phone number",
+    "email": "Email",
+    "emailPlaceholder": "Enter email address",
+    "website": "Website",
+    "websitePlaceholder": "Enter website URL",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your business",
+    "submit": "Add Business",
+    "cancel": "Cancel",
+    "businessNameRequired": "Business name is required",
+    "categoryRequired": "Category is required",
+    "municipalityRequired": "Municipality is required"
+  },
+  "addBusiness": "Add Business",
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "loginTitle": "Login to your account",
+    "registerTitle": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "forgotPassword": "Forgot password?",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "passwordsDontMatch": "Passwords don't match",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required"
+  }
+} 

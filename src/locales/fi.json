@@ -1,0 +1,158 @@
+{
+  "header": {
+    "home": "Koti",
+    "homeServices": "Kotipalvelut",
+    "restaurants": "Ravintolat",
+    "interiorDesigners": "Sisustus",
+    "bedBreakfast": "B&B",
+    "thingsToDo": "Aktiviteetit",
+    "pricing": "Hinnat",
+    "aboutUs": "Tietoa",
+    "contact": "Yhteystiedot"
+  },
+  "nav": {
+    "home": "Etusivu",
+    "restaurants": "Ravintolat",
+    "hotels": "Hotellit",
+    "tours": "Kierrokset",
+    "shopping": "Ostokset",
+    "services": "Palvelut",
+    "realestate": "Kiinteistöt",
+    "bb": "B&B",
+    "pricing": "Hinnat",
+    "contact": "Yhteystiedot",
+    "about": "Tietoa",
+    "addBusiness": "Lisää yritys"
+  },
+  "hero": {
+    "title": "Yrittäjäpolku",
+    "subtitle": "Yrityshaku Suomessa",
+    "searchPlaceholder": "Hae yrityksiä...",
+    "allMunicipalities": "Kaikki kunnat",
+    "allCategories": "Kaikki kategoriat",
+    "searchButton": "Hae"
+  },
+  "welcome": {
+    "title": "Tervetuloa Yrittäjäpolku",
+    "description": "Löydä parhaat yritykset ja palvelut Suomesta. Selaa laajaa valikoimaamme yrityshakemistossa."
+  },
+  "categories": {
+    "restaurants": "Ravintolat",
+    "hotels": "Hotellit",
+    "tours": "Kiertoajelut",
+    "shopping": "Ostokset",
+    "services": "Palvelut",
+    "realEstate": "Kiinteistöt"
+  },
+  "businessesByTags": {
+    "title": "Yritykset Tagien Mukaan",
+    "seeAllListings": "Katso Kaikki Listaukset",
+    "bigIslandActivities": "Helsinki Aktiviteetit",
+    "kauaiRestaurants": "Tampere Ravintolat",
+    "mauiRestaurants": "Turku Ravintolat",
+    "mauiShopLocal": "Oulu Paikalliset Kaupat",
+    "oahuRestaurants": "Espoo Ravintolat"
+  },
+  "pricing": {
+    "title": "Valitse Täydellinen Paketti Meiltä",
+    "monthly": "Kuukausittain",
+    "annually": "Vuosittain",
+    "plans": {
+      "free": {
+        "name": "ILMAINEN",
+        "price": "ILMAINEN",
+        "period": "Kuukausittain",
+        "button": "LISÄÄ YRITYKSESI"
+      },
+      "capitalPremium": {
+        "name": "Capital Premium Plus",
+        "price": "$45",
+        "period": "Kuukausittain",
+        "button": "Osta Nyt"
+      },
+      "goldenPremium": {
+        "name": "Golden Premium",
+        "price": "$20",
+        "period": "Kuukausittain",
+        "button": "Osta Nyt"
+      }
+    },
+    "features": {
+      "blogs": "Blogit",
+      "events": "Tapahtumat",
+      "jobs": "Työpaikat",
+      "newsFeeds": "Uutissyötteet",
+      "businessDescription": "Yrityksen Kuvaus",
+      "additionalDetails": "Lisätiedot",
+      "address": "Osoite",
+      "phone": "Puhelin",
+      "website": "Verkkosivusto",
+      "emailAddress": "Sähköpostiosoite",
+      "featuredImage": "Pääkuva",
+      "teams": "Tiimit",
+      "googleMapConfiguration": "Google Map -asetukset",
+      "reviews": "Arvostelut",
+      "googleReviews": "Google-arvostelut",
+      "businessHourConfigurations": "Aukioloaikojen asetukset",
+      "video": "Video",
+      "googlePlaceImages": "Google Place -kuvat",
+      "companyLogo": "Yrityksen Logo",
+      "extraLinks": "Lisälinkit",
+      "socialMedia": "Sosiaalinen Media",
+      "featuredBlogArticle": "1 Suositeltu Blogi/Uutisartikkeli Kuukaudessa",
+      "onlineVisibilityReport": "Online Näkyvyysraportti",
+      "googleBusinessProfileOptimization": "Google Business Profile -optimointi",
+      "aiSocialPosts": "5 AI Sosiaalisen median julkaisua",
+      "aiVideos": "5 AI-videota",
+      "value75": "($75 Arvo)",
+      "value99": "($99 Arvo)",
+      "value299": "($299 Arvo)"
+    }
+  },
+  "modal": {
+    "title": "Lisää Yrityksesi",
+    "businessName": "Yrityksen nimi",
+    "businessNamePlaceholder": "Syötä yrityksen nimi",
+    "category": "Kategoria",
+    "categoryPlaceholder": "Valitse kategoria",
+    "municipality": "Kunta",
+    "municipalityPlaceholder": "Valitse kunta",
+    "address": "Osoite",
+    "addressPlaceholder": "Syötä osoite",
+    "phone": "Puhelinnumero",
+    "phonePlaceholder": "Syötä puhelinnumero",
+    "email": "Sähköposti",
+    "emailPlaceholder": "Syötä sähköpostiosoite",
+    "website": "Verkkosivusto",
+    "websitePlaceholder": "Syötä verkkosivuston osoite",
+    "description": "Kuvaus",
+    "descriptionPlaceholder": "Kuvaile yritystäsi",
+    "submit": "Lisää Yritys",
+    "cancel": "Peruuta",
+    "businessNameRequired": "Yrityksen nimi on pakollinen",
+    "categoryRequired": "Kategoria on pakollinen",
+    "municipalityRequired": "Kunta on pakollinen"
+  },
+  "auth": {
+    "login": "Kirjaudu",
+    "register": "Rekisteröidy",
+    "loginTitle": "Kirjaudu sisään",
+    "registerTitle": "Luo tili",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "confirmPassword": "Vahvista salasana",
+    "firstName": "Etunimi",
+    "lastName": "Sukunimi",
+    "loginButton": "Kirjaudu sisään",
+    "registerButton": "Rekisteröidy",
+    "haveAccount": "Onko sinulla jo tili?",
+    "noAccount": "Eikö sinulla ole tiliä?",
+    "forgotPassword": "Unohditko salasanan?",
+    "emailRequired": "Sähköposti on pakollinen",
+    "passwordRequired": "Salasana on pakollinen",
+    "passwordsDontMatch": "Salasanat eivät täsmää",
+    "firstNameRequired": "Etunimi on pakollinen",
+    "lastNameRequired": "Sukunimi on pakollinen"
+  },
+  "addBusiness": "Lisää yritys"
+} 

@@ -1,486 +1,993 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, Phone, User, Plus, Menu, X, MapPin, Star, Clock, Globe, ChevronDown } from 'lucide-react';
+import { ChevronDown, Phone, Mail, MapPin, Star, Users, Award, Heart, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import PricingPage from './PricingPage';
 
-const App = () => {
+const HomePage = () => {
   const { t, i18n } = useTranslation();
-
-  // Update document title when language changes
-  useEffect(() => {
-    document.title = `${t('site_title')} - ${t('site_subtitle')}`;
-  }, [t, i18n.language]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAnnually, setIsAnnually] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState(t('all_counties'));
-  const [isRegionOpen, setIsRegionOpen] = useState(false);
+  const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const languageDropdownRef = useRef(null);
+  const authDropdownRef = useRef(null);
+  const [formData, setFormData] = useState({
+    nimi: '',
+    kategoria: '',
+    kunta: '',
+    kaupunki: '',
+    osoite: '',
+    puhelinnumero: '',
+    sahkoposti: '',
+    kotisivu: '',
+    kuvaus: ''
+  });
+
+  const [authFormData, setAuthFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: ''
+  });
+
+  const kategoriad = ['Ravintolat', 'Hotellit', 'Kiertoajelut', 'Ostokset', 'Palvelut', 'Kiinteistöt'];
+  const kunnat = ['Helsinki', 'Tampere', 'Turku', 'Oulu', 'Espoo', 'Vantaa'];
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setFormData({
+      nimi: '',
+      kategoria: '',
+      kunta: '',
+      kaupunki: '',
+      osoite: '',
+      puhelinnumero: '',
+      sahkoposti: '',
+      kotisivu: '',
+      kuvaus: ''
+    });
+  };
+
+  const openLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setIsAuthDropdownOpen(false);
+  };
+
+  const openRegisterModal = () => {
+    setIsRegisterModalOpen(true);
+    setIsAuthDropdownOpen(false);
+  };
+
+  const closeAuthModals = () => {
+    setIsLoginModalOpen(false);
+    setIsRegisterModalOpen(false);
+    setAuthFormData({
+      email: '',
+      password: '',
+      confirmPassword: '',
+      firstName: '',
+      lastName: ''
+    });
+  };
+
+  const switchToRegister = () => {
+    setIsLoginModalOpen(false);
+    setIsRegisterModalOpen(true);
+  };
+
+  const switchToLogin = () => {
+    setIsRegisterModalOpen(false);
+    setIsLoginModalOpen(true);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAuthInputChange = (e) => {
+    const { name, value } = e.target;
+    setAuthFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validatsioon
+    const requiredFields = ['nimi', 'kategoria', 'kunta', 'kaupunki', 'osoite', 'puhelinnumero', 'sahkoposti'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    
+    if (missingFields.length > 0) {
+      alert('Täida kõik kohustuslikud väljad!');
+      return;
+    }
+
+    // Siin saaks salvestada andmebaasi
+    console.log('Yritys lisatud:', formData);
+    alert('Yritys lisatud edukalt!');
+    closeModal();
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!authFormData.email) {
+      alert(t('auth.emailRequired'));
+      return;
+    }
+    if (!authFormData.password) {
+      alert(t('auth.passwordRequired'));
+      return;
+    }
+
+    // Here you would handle login logic
+    console.log('Login attempt:', { email: authFormData.email });
+    alert('Login successful!');
+    closeAuthModals();
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!authFormData.firstName) {
+      alert(t('auth.firstNameRequired'));
+      return;
+    }
+    if (!authFormData.lastName) {
+      alert(t('auth.lastNameRequired'));
+      return;
+    }
+    if (!authFormData.email) {
+      alert(t('auth.emailRequired'));
+      return;
+    }
+    if (!authFormData.password) {
+      alert(t('auth.passwordRequired'));
+      return;
+    }
+    if (authFormData.password !== authFormData.confirmPassword) {
+      alert(t('auth.passwordsDontMatch'));
+      return;
+    }
+
+    // Here you would handle registration logic
+    console.log('Registration attempt:', { 
+      firstName: authFormData.firstName,
+      lastName: authFormData.lastName,
+      email: authFormData.email 
+    });
+    alert('Registration successful!');
+    closeAuthModals();
+  };
+
+  const changeLanguage = (language) => {
+    i18n.changeLanguage(language);
+    setIsLanguageOpen(false);
+  };
 
   const languages = [
-    { code: 'fi', name: 'Suomi' },
-    { code: 'en', name: 'English' },
-    { code: 'sv', name: 'Svenska' }
-  ];
-  const regions = [
-    'Kaikki maakunnat',
-    'Uusimaa',
-    'Varsinais-Suomi',
-    'Satakunta',
-    'Kanta-Häme',
-    'Pirkanmaa',
-    'Päijät-Häme',
-    'Kymenlaakso',
-    'Etelä-Karjala',
-    'Etelä-Savo',
-    'Pohjois-Savo',
-    'Pohjois-Karjala',
-    'Keski-Suomi',
-    'Etelä-Pohjanmaa',
-    'Pohjanmaa',
-    'Keski-Pohjanmaa',
-    'Pohjois-Pohjanmaa',
-    'Kainuu',
-    'Lappi',
-    'Ahvenanmaa'
+    { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'sv', name: 'Svenska', flag: '🇸🇪' }
   ];
 
-  const changeLanguage = (langCode) => {
-    i18n.changeLanguage(langCode);
-    setIsLanguageOpen(false);
-    // Update selected region text when language changes
-    if (selectedRegion === 'Kaikki maakunnat' || selectedRegion === 'All Counties' || selectedRegion === 'Alla landskap') {
-      setSelectedRegion(t('all_counties'));
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+
+  const businessCards = [
+    {
+      id: 1,
+      title: t('businessesByTags.bigIslandActivities'),
+      image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      gradient: 'from-blue-500 to-cyan-500'
+    },
+    {
+      id: 2,
+      title: t('businessesByTags.kauaiRestaurants'),
+      image: null,
+      gradient: 'from-gray-400 to-gray-600'
+    },
+    {
+      id: 3,
+      title: t('businessesByTags.mauiRestaurants'),
+      image: 'https://images.unsplash.com/photo-1544148103-0773bf10d330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      gradient: 'from-green-500 to-teal-500'
+    },
+    {
+      id: 4,
+      title: t('businessesByTags.mauiShopLocal'),
+      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      gradient: 'from-purple-500 to-indigo-500'
+    },
+    {
+      id: 5,
+      title: t('businessesByTags.oahuRestaurants'),
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      gradient: 'from-red-500 to-pink-500'
+    }
+  ];
+
+  const visibleCards = 3;
+  const maxSlides = Math.max(0, businessCards.length - visibleCards);
+
+  const getVisibleCards = () => {
+    const windowWidth = window.innerWidth;
+    if (windowWidth < 768) return 1;
+    if (windowWidth < 1024) return 2;
+    return 3;
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newVisibleCards = getVisibleCards();
+      if (currentSlide >= businessCards.length - newVisibleCards) {
+        setCurrentSlide(Math.max(0, businessCards.length - newVisibleCards));
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [businessCards.length, currentSlide]);
+
+  const nextSlide = () => {
+    setCurrentSlide(prev => Math.min(prev + 1, maxSlides));
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(prev => Math.max(prev - 1, 0));
+  };
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && currentSlide < maxSlides) {
+      nextSlide();
+    }
+    if (isRightSwipe && currentSlide > 0) {
+      prevSlide();
     }
   };
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language)?.name || 'Suomi';
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target)) {
+        setIsLanguageOpen(false);
+      }
+      if (authDropdownRef.current && !authDropdownRef.current.contains(event.target)) {
+        setIsAuthDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-3 py-2">
-          <div className="flex justify-between items-center">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <div className="text-white font-bold text-base">HT</div>
+      <header className="bg-gray-800 text-white sticky top-0 z-40">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded flex items-center justify-center">
+                <span className="text-black font-bold text-lg">↗</span>
               </div>
-              <div className="hidden sm:block">
-                <h1 className="text-base font-semibold text-gray-800">Hawaii Thrive</h1>
-              </div>
+              <a href="/" className="text-2xl font-bold hover:text-yellow-400 transition-colors">YRITTÄJÄPOLKU</a>
             </div>
             
-            {/* Desktop Navigation */}
-            <nav className="hidden xl:flex space-x-6">
-              <a href="#home" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{t('navigation.home')}</a>
-              <a href="#restaurants" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{t('navigation.restaurants')}</a>
-              <a href="#interior-designers" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{t('navigation.interior_designers')}</a>
-              <a href="#bed-breakfast" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{t('navigation.bed_breakfast')}</a>
-              <a href="#things-to-do" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{t('navigation.things_to_do')}</a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{t('navigation.pricing')}</a>
-              <a href="#about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{t('navigation.about')}</a>
+            <nav className="hidden md:flex space-x-8">
+              <a href="/" className="text-gray-300 hover:text-white transition-colors">{t('nav.home')}</a>
+              <a href="#services" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
+              <a href="#restaurants" className="text-gray-300 hover:text-white transition-colors">{t('nav.restaurants')}</a>
+              <a href="#designers" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
+              <a href="#breakfast" className="text-gray-300 hover:text-white transition-colors">{t('nav.bb')}</a>
+              <a href="#todo" className="text-gray-300 hover:text-white transition-colors">{t('nav.tours')}</a>
+              <a href="/pricing" className="text-gray-300 hover:text-white transition-colors">{t('nav.pricing')}</a>
+              <a href="#about" className="text-gray-300 hover:text-white transition-colors">{t('nav.about')}</a>
+              <a href="#contact" className="text-gray-300 hover:text-white transition-colors">{t('nav.contact')}</a>
             </nav>
-            
-            {/* Right Side - Phone, Language, Login, Add Business */}
-            <div className="flex items-center space-x-1 md:space-x-2 lg:space-x-3">
-              {/* Phone Number */}
-              <div className="hidden lg:flex items-center space-x-1 text-gray-700">
-                <Phone size={16} />
-                <span className="font-medium text-sm">(808) 555-0123</span>
-              </div>
+
+            <div className="flex items-center space-x-4">
+              <span className="text-sm">📞 (808) 555-0123</span>
               
-              {/* Language Selector */}
-              <div className="relative">
-                <button 
-                  className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors p-1"
+              {/* Language Switcher */}
+              <div className="relative" ref={languageDropdownRef}>
+                <button
                   onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                  className="flex items-center space-x-2 text-sm hover:text-gray-300 transition-colors"
                 >
-                  <Globe size={16} />
-                  <span className="hidden md:inline text-sm">{currentLanguage}</span>
-                  <ChevronDown size={14} />
+                  <span>🌐</span>
+                  <span>{currentLanguage.flag}</span>
+                  <span>{currentLanguage.name}</span>
+                  <ChevronDown size={16} />
                 </button>
+                
                 {isLanguageOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg py-2 z-10">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
-                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => changeLanguage(lang.code)}
+                        className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                       >
-                        {lang.name}
+                        <span>{lang.flag}</span>
+                        <span>{lang.name}</span>
                       </button>
                     ))}
                   </div>
                 )}
               </div>
               
-              {/* Login/Register */}
-              <button className="hidden lg:flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors p-1">
-                <User size={16} />
-                <span className="text-sm">{t('login_register')}</span>
-              </button>
-              
-              {/* Add New Business */}
-              <button className="bg-blue-600 text-white px-2 md:px-3 py-1.5 md:py-2 rounded font-medium hover:bg-blue-700 transition-colors flex items-center space-x-1">
-                <Plus size={14} className="md:w-4 md:h-4" />
-                <span className="hidden md:inline text-xs md:text-sm">{t('add_new_business')}</span>
-              </button>
-              
-              {/* Mobile Menu Button */}
+              {/* Auth Dropdown */}
+              <div className="relative" ref={authDropdownRef}>
+                <button
+                  onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)}
+                  className="flex items-center space-x-2 text-sm hover:text-gray-300 transition-colors"
+                >
+                  <span>👤</span>
+                  <span>{t('auth.login')}</span>
+                  <ChevronDown size={16} />
+                </button>
+                
+                {isAuthDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg py-2 z-10">
+                    <button
+                      onClick={openLoginModal}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      {t('auth.login')}
+                    </button>
+                    <button
+                      onClick={openRegisterModal}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      {t('auth.register')}
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <button 
-                className="xl:hidden p-2"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={openModal}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
               >
-                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                {t('addBusiness')}
               </button>
             </div>
           </div>
-          
-          {/* Mobile Menu */}
-          {isMenuOpen && (
-            <div className="xl:hidden absolute top-full left-0 right-0 bg-white shadow-lg py-4 z-40">
-              <nav className="flex flex-col space-y-4 px-4">
-                <a href="#home" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">{t('navigation.home')}</a>
-                <a href="#restaurants" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">{t('navigation.restaurants')}</a>
-                <a href="#interior-designers" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">{t('navigation.interior_designers')}</a>
-                <a href="#bed-breakfast" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">{t('navigation.bed_breakfast')}</a>
-                <a href="#things-to-do" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">{t('navigation.things_to_do')}</a>
-                <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">{t('navigation.pricing')}</a>
-                <a href="#about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">{t('navigation.about')}</a>
-                <div className="pt-4 border-t border-gray-200">
-                  <button className="flex items-center space-x-1 text-gray-700 mb-2">
-                    <User size={18} />
-                    <span>{t('login_register')}</span>
-                  </button>
-                  <div className="flex items-center space-x-2 text-gray-700">
-                    <Phone size={18} />
-                    <span>(808) 555-0123</span>
-                  </div>
-                </div>
-              </nav>
-            </div>
-          )}
         </div>
       </header>
 
-      {/* Hero Section with City Background */}
-      <section className="relative min-h-[400px] md:h-96 bg-cover bg-center bg-no-repeat" 
-               style={{
-                 backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1200 600\'%3E%3Cdefs%3E%3ClinearGradient id=\'hawaiiCity\' x1=\'0%25\' y1=\'0%25\' x2=\'100%25\' y2=\'100%25\'%3E%3Cstop offset=\'0%25\' style=\'stop-color:%23087CB8;stop-opacity:1\' /%3E%3Cstop offset=\'100%25\' style=\'stop-color:%2306B6D4;stop-opacity:1\' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=\'1200\' height=\'600\' fill=\'url(%23hawaiiCity)\'/%3E%3C!-- Buildings silhouette --%3E%3Crect x=\'50\' y=\'300\' width=\'80\' height=\'300\' fill=\'%23ffffff\' opacity=\'0.9\'/%3E%3Crect x=\'150\' y=\'250\' width=\'60\' height=\'350\' fill=\'%23ffffff\' opacity=\'0.8\'/%3E%3Crect x=\'230\' y=\'280\' width=\'90\' height=\'320\' fill=\'%23ffffff\' opacity=\'0.9\'/%3E%3Crect x=\'340\' y=\'200\' width=\'70\' height=\'400\' fill=\'%23ffffff\' opacity=\'0.95\'/%3E%3Crect x=\'430\' y=\'220\' width=\'85\' height=\'380\' fill=\'%23ffffff\' opacity=\'0.85\'/%3E%3Crect x=\'540\' y=\'180\' width=\'75\' height=\'420\' fill=\'%23ffffff\' opacity=\'0.9\'/%3E%3Crect x=\'640\' y=\'240\' width=\'95\' height=\'360\' fill=\'%23ffffff\' opacity=\'0.8\'/%3E%3Crect x=\'760\' y=\'260\' width=\'65\' height=\'340\' fill=\'%23ffffff\' opacity=\'0.9\'/%3E%3Crect x=\'850\' y=\'220\' width=\'80\' height=\'380\' fill=\'%23ffffff\' opacity=\'0.85\'/%3E%3Crect x=\'950\' y=\'290\' width=\'70\' height=\'310\' fill=\'%23ffffff\' opacity=\'0.8\'/%3E%3Crect x=\'1040\' y=\'250\' width=\'90\' height=\'350\' fill=\'%23ffffff\' opacity=\'0.9\'/%3E%3C!-- Palm trees --%3E%3Cpath d=\'M100,400 Q90,380 80,400 Q90,420 100,400 M120,400 Q110,380 100,400 Q110,420 120,400\' fill=\'%2316A085\' opacity=\'0.7\'/%3E%3Cpath d=\'M900,420 Q890,400 880,420 Q890,440 900,420 M920,420 Q910,400 900,420 Q910,440 920,420\' fill=\'%2316A085\' opacity=\'0.7\'/%3E%3C/svg%3E")'
-               }}>
-        <div className="absolute inset-0 bg-blue-900 bg-opacity-40"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-3 py-6">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 max-w-3xl">
-            {t('site_title')}
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-400">
+        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+        <div className="relative z-10 text-center text-white px-4">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            {t('hero.title')}
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl mb-6 md:mb-8 font-light max-w-3xl">
-            {t('site_subtitle')}
+          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+            {t('hero.subtitle')}
           </p>
           
-          {/* Search Bar */}
-          <div className="w-full max-w-4xl mx-auto px-3">
-            <div className="flex flex-col lg:flex-row gap-2 md:gap-3">
-              {/* Search Input */}
-              <div className="relative flex-1 min-w-0">
-                <input
-                  type="text"
-                  placeholder={t('search_placeholder')}
-                  className="w-full px-3 py-3 text-base md:text-lg text-gray-800 rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
-                />
-              </div>
-              
-              {/* Region Dropdown */}
-              <div className="relative w-full lg:w-48 flex-shrink-0">
-                <button 
-                  className="w-full px-3 py-3 text-base md:text-lg text-gray-800 bg-white rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-between"
-                  onClick={() => setIsRegionOpen(!isRegionOpen)}
-                >
-                  <span className="truncate">{selectedRegion}</span>
-                  <ChevronDown size={18} className="flex-shrink-0 ml-2" />
-                </button>
-                {isRegionOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg py-2 z-50 max-h-60 overflow-y-auto">
-                    {regions.map((region) => (
-                      <button
-                        key={region}
-                        className="block w-full text-left px-3 py-2 text-sm md:text-base text-gray-800 hover:bg-gray-100 transition-colors"
-                        onClick={() => {
-                          setSelectedRegion(region);
-                          setIsRegionOpen(false);
-                        }}
-                      >
-                        {region}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              {/* Search Button */}
-              <button className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-base md:text-lg w-full lg:w-auto flex-shrink-0">
-                {t('search_button')}
+          <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+            <input
+              type="text"
+              placeholder={t('hero.searchPlaceholder')}
+              className="flex-1 px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            />
+            <select className="px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
+              <option>{t('hero.allMunicipalities')}</option>
+              {kunnat.map(kunta => (
+                <option key={kunta}>{kunta}</option>
+              ))}
+            </select>
+            <select className="px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
+              <option>{t('hero.allCategories')}</option>
+              {kategoriad.map(kategoria => (
+                <option key={kategoria}>{kategoria}</option>
+              ))}
+            </select>
+            <button className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
+              {t('hero.searchButton')}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Businesses by Tags Carousel */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800">{t('businessesByTags.title')}</h2>
+            <a href="#" className="text-blue-600 hover:text-blue-800 font-semibold flex items-center">
+              {t('businessesByTags.seeAllListings')} →
+            </a>
+          </div>
+          
+          <div className="relative">
+            {/* Left Arrow */}
+            {currentSlide > 0 && (
+              <button
+                onClick={prevSlide}
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-blue-50"
+                style={{ marginLeft: '-20px' }}
+              >
+                <ChevronLeft size={24} className="text-gray-600 hover:text-blue-600" />
               </button>
+            )}
+            
+            {/* Right Arrow */}
+            {currentSlide < maxSlides && (
+              <button
+                onClick={nextSlide}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-blue-50"
+                style={{ marginRight: '-20px' }}
+              >
+                <ChevronRight size={24} className="text-gray-600 hover:text-blue-600" />
+              </button>
+            )}
+            
+            {/* Carousel Container */}
+            <div className="overflow-hidden">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ 
+                  transform: `translateX(-${currentSlide * (100 / visibleCards)}%)`,
+                }}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+              >
+                {businessCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4"
+                  >
+                    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                      {card.image ? (
+                        <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${card.image})` }}></div>
+                      ) : (
+                        <div className={`h-48 bg-gradient-to-r ${card.gradient}`}></div>
+                      )}
+                      <div className="p-6">
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">{card.title}</h3>
+                        <p className="text-gray-600 text-sm">Discover amazing businesses in this category</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Welcome Section */}
-      <section className="py-12 md:py-16 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-3 text-center">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
-            {t('welcome_title')}
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-2">
-            {t('welcome_subtitle')}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">{t('welcome.title')}</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            {t('welcome.description')}
           </p>
-        </div>
-      </section>
-
-      {/* Business Categories */}
-      <section className="py-12 md:py-20">
-        <div className="max-w-6xl mx-auto px-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 md:mb-12 text-center">{t('browse_categories')}</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-            {/* Restaurants */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              <div className="h-48 bg-gradient-to-br from-red-500 to-orange-500 relative">
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-2xl font-bold text-white">{t('categories.restaurants.title')}</h3>
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">{t('categories.restaurants.description')}</p>
-                <div className="flex items-center text-blue-600 font-medium">
-                  <span>{t('categories.restaurants.action')}</span>
-                  <Search className="ml-2" size={16} />
-                </div>
-              </div>
-            </div>
-
-            {/* Interior Designers */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              <div className="h-48 bg-gradient-to-br from-purple-500 to-pink-500 relative">
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-2xl font-bold text-white">{t('categories.interior_designers.title')}</h3>
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">{t('categories.interior_designers.description')}</p>
-                <div className="flex items-center text-blue-600 font-medium">
-                  <span>{t('categories.interior_designers.action')}</span>
-                  <Search className="ml-2" size={16} />
-                </div>
-              </div>
-            </div>
-
-            {/* Bed & Breakfast */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              <div className="h-48 bg-gradient-to-br from-green-500 to-teal-500 relative">
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-2xl font-bold text-white">{t('categories.bed_breakfast.title')}</h3>
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">{t('categories.bed_breakfast.description')}</p>
-                <div className="flex items-center text-blue-600 font-medium">
-                  <span>{t('categories.bed_breakfast.action')}</span>
-                  <Search className="ml-2" size={16} />
-                </div>
-              </div>
-            </div>
-
-            {/* Things To Do */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              <div className="h-48 bg-gradient-to-br from-blue-500 to-cyan-500 relative">
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-2xl font-bold text-white">{t('categories.things_to_do.title')}</h3>
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">{t('categories.things_to_do.description')}</p>
-                <div className="flex items-center text-blue-600 font-medium">
-                  <span>{t('categories.things_to_do.action')}</span>
-                  <Search className="ml-2" size={16} />
-                </div>
-              </div>
-            </div>
-
-            {/* Home Services */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              <div className="h-48 bg-gradient-to-br from-yellow-500 to-orange-500 relative">
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-2xl font-bold text-white">{t('categories.home_services.title')}</h3>
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">{t('categories.home_services.description')}</p>
-                <div className="flex items-center text-blue-600 font-medium">
-                  <span>{t('categories.home_services.action')}</span>
-                  <Search className="ml-2" size={16} />
-                </div>
-              </div>
-            </div>
-
-            {/* Local Businesses */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              <div className="h-48 bg-gradient-to-br from-indigo-500 to-purple-500 relative">
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <h3 className="text-2xl font-bold text-white">{t('categories.local_businesses.title')}</h3>
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">{t('categories.local_businesses.description')}</p>
-                <div className="flex items-center text-blue-600 font-medium">
-                  <span>{t('categories.local_businesses.action')}</span>
-                  <Search className="ml-2" size={16} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Businesses */}
-      <section className="py-12 md:py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 md:mb-12 text-center">{t('featured_businesses')}</h2>
+          <h3 className="text-2xl font-bold text-gray-800 mb-8">Selaa yritysluokkia</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-blue-400 to-teal-400"></div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xl font-semibold">Aloha Restaurant</h3>
-                  <div className="flex items-center text-yellow-500">
-                    <Star className="fill-current" size={16} />
-                    <span className="ml-1 text-gray-600">4.8</span>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {kategoriad.map((kategoria, index) => {
+              const colors = [
+                'from-red-400 to-red-600',
+                'from-purple-400 to-purple-600', 
+                'from-green-400 to-green-600',
+                'from-blue-400 to-blue-600',
+                'from-yellow-400 to-yellow-600',
+                'from-indigo-400 to-indigo-600'
+              ];
+              
+              return (
+                <div 
+                  key={kategoria}
+                  className={`h-32 bg-gradient-to-r ${colors[index]} rounded-lg flex items-center justify-center text-white text-xl font-semibold hover:shadow-lg transition-shadow cursor-pointer`}
+                >
+                  {kategoria}
                 </div>
-                <p className="text-gray-600 mb-2">Traditional Hawaiian Cuisine</p>
-                <div className="flex items-center text-gray-500 text-sm">
-                  <MapPin size={14} />
-                  <span className="ml-1">Honolulu, HI</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-purple-400 to-pink-400"></div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xl font-semibold">Island Interiors</h3>
-                  <div className="flex items-center text-yellow-500">
-                    <Star className="fill-current" size={16} />
-                    <span className="ml-1 text-gray-600">4.9</span>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-2">Interior Design Studio</p>
-                <div className="flex items-center text-gray-500 text-sm">
-                  <MapPin size={14} />
-                  <span className="ml-1">Maui, HI</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-green-400 to-blue-400"></div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xl font-semibold">Paradise B&B</h3>
-                  <div className="flex items-center text-yellow-500">
-                    <Star className="fill-current" size={16} />
-                    <span className="ml-1 text-gray-600">4.7</span>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-2">Luxury Bed & Breakfast</p>
-                <div className="flex items-center text-gray-500 text-sm">
-                  <MapPin size={14} />
-                  <span className="ml-1">Kauai, HI</span>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-12 md:py-20 bg-blue-600 text-white">
-        <div className="max-w-3xl mx-auto px-3 text-center">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">{t('ready_to_grow')}</h2>
-          <p className="text-lg md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto">
-            {t('grow_description')}
-          </p>
-          <button className="bg-white text-blue-600 px-6 md:px-8 py-3 rounded-lg text-base md:text-lg font-semibold hover:bg-gray-100 transition-colors w-full sm:w-auto">
-            {t('add_business_now')}
-          </button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 md:py-12 bg-gray-900 text-white">
-        <div className="max-w-6xl mx-auto px-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+      <footer className="bg-gray-800 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <div className="text-white font-bold">HT</div>
+                <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded flex items-center justify-center">
+                  <span className="text-black font-bold text-sm">↗</span>
                 </div>
-                <h3 className="text-xl font-bold">Hawaii Thrive</h3>
+                <h3 className="text-xl font-bold">YRITTÄJÄPOLKU</h3>
               </div>
               <p className="text-gray-400">
-                {t('footer.description')}
+                Yhdistämme suomalaiset yritykset yhteisön kanssa. Sinun paikallinen yrityshakemistosi.
               </p>
             </div>
-            
             <div>
-              <h4 className="text-lg font-semibold mb-4">{t('footer.categories_title')}</h4>
+              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">{t('navigation.restaurants')}</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">{t('navigation.interior_designers')}</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">{t('navigation.bed_breakfast')}</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">{t('navigation.things_to_do')}</a></li>
+                <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
+                <li><a href="/pricing" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="#contact" className="hover:text-white transition-colors">Contact</a></li>
               </ul>
             </div>
-            
             <div>
-              <h4 className="text-lg font-semibold mb-4">{t('footer.business_title')}</h4>
+              <h4 className="text-lg font-semibold mb-4">Categories</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">{t('footer.add_business')}</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">{t('navigation.pricing')}</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">{t('footer.business_login')}</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">{t('footer.support')}</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Restaurants</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Hotels</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Tours</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Services</a></li>
               </ul>
             </div>
-            
             <div>
-              <h4 className="text-lg font-semibold mb-4">{t('footer.contact_title')}</h4>
+              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
               <div className="space-y-2 text-gray-400">
-                <div className="flex items-center space-x-2">
-                  <Phone size={16} />
-                  <span>(808) 555-0123</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <MapPin size={16} />
-                  <span>Honolulu, Hawaii</span>
-                </div>
+                <p className="flex items-center">
+                  <Phone size={16} className="mr-2" />
+                  (808) 555-0123
+                </p>
+                <p className="flex items-center">
+                  <Mail size={16} className="mr-2" />
+                  info@yrittajapolku.com
+                </p>
+                <p className="flex items-center">
+                  <MapPin size={16} className="mr-2" />
+                  Helsinki, Suomi
+                </p>
               </div>
             </div>
           </div>
-          
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>{t('footer.copyright')}</p>
+            <p>&copy; 2024 YRITTÄJÄPOLKU. Kaikki oikeudet pidätetään.</p>
           </div>
         </div>
       </footer>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-800">{t('modal.title')}</h2>
+              <button 
+                onClick={closeModal}
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleSubmit} className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* Yrityksen nimi */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.businessName')} *
+                  </label>
+                  <input
+                    type="text"
+                    name="nimi"
+                    value={formData.nimi}
+                    onChange={handleInputChange}
+                    placeholder={t('modal.businessNamePlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Kategoria */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.category')} *
+                  </label>
+                  <select
+                    name="kategoria"
+                    value={formData.kategoria}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    <option value="">{t('modal.categoryPlaceholder')}</option>
+                    {kategoriad.map(kategoria => (
+                      <option key={kategoria} value={kategoria}>{kategoria}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Kunta */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.municipality')} *
+                  </label>
+                  <select
+                    name="kunta"
+                    value={formData.kunta}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    <option value="">{t('modal.municipalityPlaceholder')}</option>
+                    {kunnat.map(kunta => (
+                      <option key={kunta} value={kunta}>{kunta}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Kaupunki */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Kaupunki/Kunta *
+                  </label>
+                  <input
+                    type="text"
+                    name="kaupunki"
+                    value={formData.kaupunki}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Osoite */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.address')} *
+                  </label>
+                  <input
+                    type="text"
+                    name="osoite"
+                    value={formData.osoite}
+                    onChange={handleInputChange}
+                    placeholder={t('modal.addressPlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Puhelinnumero */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.phone')} *
+                  </label>
+                  <input
+                    type="tel"
+                    name="puhelinnumero"
+                    value={formData.puhelinnumero}
+                    onChange={handleInputChange}
+                    placeholder={t('modal.phonePlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Sähköposti */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.email')} *
+                  </label>
+                  <input
+                    type="email"
+                    name="sahkoposti"
+                    value={formData.sahkoposti}
+                    onChange={handleInputChange}
+                    placeholder={t('modal.emailPlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Kotisivu */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.website')}
+                  </label>
+                  <input
+                    type="url"
+                    name="kotisivu"
+                    value={formData.kotisivu}
+                    onChange={handleInputChange}
+                    placeholder={t('modal.websitePlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Kuvaus */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('modal.description')}
+                  </label>
+                  <textarea
+                    name="kuvaus"
+                    value={formData.kuvaus}
+                    onChange={handleInputChange}
+                    rows="3"
+                    placeholder={t('modal.descriptionPlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  ></textarea>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex justify-end space-x-4 mt-6 pt-4 border-t">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-6 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  {t('modal.cancel')}
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {t('modal.submit')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Login Modal */}
+      {isLoginModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-800">{t('auth.loginTitle')}</h2>
+              <button 
+                onClick={closeAuthModals}
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleLogin} className="p-6">
+              <div className="space-y-4">
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('auth.email')} *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={authFormData.email}
+                    onChange={handleAuthInputChange}
+                    placeholder={t('auth.email')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('auth.password')} *
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={authFormData.password}
+                    onChange={handleAuthInputChange}
+                    placeholder={t('auth.password')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex flex-col space-y-4 mt-6 pt-4 border-t">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {t('auth.loginButton')}
+                </button>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">
+                    {t('auth.noAccount')}{' '}
+                    <button
+                      type="button"
+                      onClick={switchToRegister}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      {t('auth.register')}
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Register Modal */}
+      {isRegisterModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-800">{t('auth.registerTitle')}</h2>
+              <button 
+                onClick={closeAuthModals}
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleRegister} className="p-6">
+              <div className="space-y-4">
+                {/* First Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('auth.firstName')} *
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={authFormData.firstName}
+                    onChange={handleAuthInputChange}
+                    placeholder={t('auth.firstName')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Last Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('auth.lastName')} *
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={authFormData.lastName}
+                    onChange={handleAuthInputChange}
+                    placeholder={t('auth.lastName')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('auth.email')} *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={authFormData.email}
+                    onChange={handleAuthInputChange}
+                    placeholder={t('auth.email')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('auth.password')} *
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={authFormData.password}
+                    onChange={handleAuthInputChange}
+                    placeholder={t('auth.password')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {t('auth.confirmPassword')} *
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={authFormData.confirmPassword}
+                    onChange={handleAuthInputChange}
+                    placeholder={t('auth.confirmPassword')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex flex-col space-y-4 mt-6 pt-4 border-t">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {t('auth.registerButton')}
+                </button>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">
+                    {t('auth.haveAccount')}{' '}
+                    <button
+                      type="button"
+                      onClick={switchToLogin}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      {t('auth.login')}
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default App;
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App; 

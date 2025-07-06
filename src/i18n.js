@@ -1,43 +1,40 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Import translation files
-import translationFI from './locales/fi/translation.json';
-import translationEN from './locales/en/translation.json';
-import translationSV from './locales/sv/translation.json';
+// Import language files
+import fi from './locales/fi.json';
+import en from './locales/en.json';
+import sv from './locales/sv.json';
 
 const resources = {
   fi: {
-    translation: translationFI
+    translation: fi
   },
   en: {
-    translation: translationEN
+    translation: en
   },
   sv: {
-    translation: translationSV
+    translation: sv
   }
 };
 
-// Get saved language from localStorage or default to Finnish
-const savedLanguage = localStorage.getItem('i18nextLng') || 'fi';
-
 i18n
+  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: savedLanguage, // Use saved language or default to Finnish
-    fallbackLng: 'fi', // Fallback language: Finnish
-    
-    keySeparator: false, // We do not use keys in form messages.welcome
+    fallbackLng: 'fi',
+    debug: false,
     
     interpolation: {
-      escapeValue: false // React already does escaping
+      escapeValue: false,
+    },
+    
+    detection: {
+      order: ['localStorage', 'browserLanguage', 'htmlTag', 'path', 'subdomain'],
+      caches: ['localStorage'],
     }
   });
-
-// Save language changes to localStorage
-i18n.on('languageChanged', (lng) => {
-  localStorage.setItem('i18nextLng', lng);
-});
 
 export default i18n; 

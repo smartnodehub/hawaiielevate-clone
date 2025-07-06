@@ -1,0 +1,158 @@
+{
+  "header": {
+    "home": "Hem",
+    "homeServices": "Hemtjänster",
+    "restaurants": "Restauranger",
+    "interiorDesigners": "Inredningsdesigners",
+    "bedBreakfast": "Bed & Breakfast",
+    "thingsToDo": "Aktiviteter",
+    "pricing": "Prissättning",
+    "aboutUs": "Om oss",
+    "contact": "Kontakt"
+  },
+  "nav": {
+    "home": "Hem",
+    "restaurants": "Restauranger",
+    "hotels": "Hotell",
+    "tours": "Turer",
+    "shopping": "Shopping",
+    "services": "Tjänster",
+    "realestate": "Fastigheter",
+    "bb": "B&B",
+    "pricing": "Prissättning",
+    "contact": "Kontakt",
+    "about": "Om oss",
+    "addBusiness": "Lägg Till Företag"
+  },
+  "hero": {
+    "title": "Yrittäjäpolku",
+    "subtitle": "Företagssökning i Finland",
+    "searchPlaceholder": "Sök efter företag...",
+    "allMunicipalities": "Alla Kommuner",
+    "allCategories": "Alla Kategorier",
+    "searchButton": "Sök"
+  },
+  "welcome": {
+    "title": "Välkommen till Yrittäjäpolku",
+    "description": "Hitta de bästa företagen och tjänsterna i Finland. Bläddra i vår omfattande företagskatalog."
+  },
+  "categories": {
+    "restaurants": "Restauranger",
+    "hotels": "Hotell",
+    "tours": "Turer",
+    "shopping": "Shopping",
+    "services": "Tjänster",
+    "realEstate": "Fastigheter"
+  },
+  "businessesByTags": {
+    "title": "Företag efter Taggar",
+    "seeAllListings": "Se Alla Listor",
+    "bigIslandActivities": "Helsingfors Aktiviteter",
+    "kauaiRestaurants": "Tammerfors Restauranger",
+    "mauiRestaurants": "Åbo Restauranger", 
+    "mauiShopLocal": "Uleåborg Lokala Butiker",
+    "oahuRestaurants": "Esbo Restauranger"
+  },
+  "pricing": {
+    "title": "Välj Din Perfekta Plan Från Oss",
+    "monthly": "Månatlig",
+    "annually": "Årlig",
+    "plans": {
+      "free": {
+        "name": "GRATIS",
+        "price": "GRATIS",
+        "period": "Månatlig",
+        "button": "LÄGG TILL DITT FÖRETAG"
+      },
+      "capitalPremium": {
+        "name": "Capital Premium Plus",
+        "price": "$45",
+        "period": "Månatlig",
+        "button": "Köp Nu"
+      },
+      "goldenPremium": {
+        "name": "Golden Premium",
+        "price": "$20",
+        "period": "Månatlig",
+        "button": "Köp Nu"
+      }
+    },
+    "features": {
+      "blogs": "Bloggar",
+      "events": "Evenemang",
+      "jobs": "Jobb",
+      "newsFeeds": "Nyhetsflöden",
+      "businessDescription": "Företagsbeskrivning",
+      "additionalDetails": "Ytterligare Detaljer",
+      "address": "Adress",
+      "phone": "Telefon",
+      "website": "Webbplats",
+      "emailAddress": "E-postadress",
+      "featuredImage": "Utvald Bild",
+      "teams": "Team",
+      "googleMapConfiguration": "Google Map-konfiguration",
+      "reviews": "Recensioner",
+      "googleReviews": "Google-recensioner",
+      "businessHourConfigurations": "Öppettider Konfigurationer",
+      "video": "Video",
+      "googlePlaceImages": "Google Place-bilder",
+      "companyLogo": "Företagslogga",
+      "extraLinks": "Extra Länkar",
+      "socialMedia": "Sociala Medier",
+      "featuredBlogArticle": "1 Utvald Blogg/Nyhetsartikel Varje månad",
+      "onlineVisibilityReport": "Online Synlighetsrapport",
+      "googleBusinessProfileOptimization": "Google Business Profile-optimering",
+      "aiSocialPosts": "5 AI Sociala Inlägg",
+      "aiVideos": "5 AI-videor",
+      "value75": "($75 Värde)",
+      "value99": "($99 Värde)",
+      "value299": "($299 Värde)"
+    }
+  },
+  "modal": {
+    "title": "Lägg Till Ditt Företag",
+    "businessName": "Företagsnamn",
+    "businessNamePlaceholder": "Ange företagsnamn",
+    "category": "Kategori",
+    "categoryPlaceholder": "Välj kategori",
+    "municipality": "Kommun",
+    "municipalityPlaceholder": "Välj kommun",
+    "address": "Adress",
+    "addressPlaceholder": "Ange adress",
+    "phone": "Telefonnummer",
+    "phonePlaceholder": "Ange telefonnummer",
+    "email": "E-post",
+    "emailPlaceholder": "Ange e-postadress",
+    "website": "Webbplats",
+    "websitePlaceholder": "Ange webbplats-URL",
+    "description": "Beskrivning",
+    "descriptionPlaceholder": "Beskriv ditt företag",
+    "submit": "Lägg Till Företag",
+    "cancel": "Avbryt",
+    "businessNameRequired": "Företagsnamn krävs",
+    "categoryRequired": "Kategori krävs",
+    "municipalityRequired": "Kommun krävs"
+  },
+  "auth": {
+    "login": "Logga in",
+    "register": "Registrera",
+    "loginTitle": "Logga in på ditt konto",
+    "registerTitle": "Skapa konto",
+    "email": "E-post",
+    "password": "Lösenord",
+    "confirmPassword": "Bekräfta lösenord",
+    "firstName": "Förnamn",
+    "lastName": "Efternamn",
+    "loginButton": "Logga in",
+    "registerButton": "Registrera",
+    "haveAccount": "Har du redan ett konto?",
+    "noAccount": "Har du inget konto?",
+    "forgotPassword": "Glömt lösenord?",
+    "emailRequired": "E-post krävs",
+    "passwordRequired": "Lösenord krävs",
+    "passwordsDontMatch": "Lösenorden stämmer inte överens",
+    "firstNameRequired": "Förnamn krävs",
+    "lastNameRequired": "Efternamn krävs"
+  },
+  "addBusiness": "Lägg Till Företag"
+} 
