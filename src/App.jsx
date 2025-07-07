@@ -551,9 +551,9 @@ const HomePage = () => {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="bg-gray-800 text-white sticky top-0 z-40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex items-center justify-center h-16 relative">
+            <div className="flex items-center space-x-3 absolute left-0">
               <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded flex items-center justify-center">
                 <span className="text-black font-bold text-lg">↗</span>
               </div>
@@ -561,14 +561,12 @@ const HomePage = () => {
             </div>
             
             <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-300 hover:text-white transition-colors">{t('nav.home')}</a>
-              <a href="#services" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
-              <a href="#restaurants" className="text-gray-300 hover:text-white transition-colors">{t('nav.restaurants')}</a>
-              <a href="#designers" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
-              <a href="/today" className="text-gray-300 hover:text-white transition-colors">{t('what_to_do_today')}</a>
-              <a href="#todo" className="text-gray-300 hover:text-white transition-colors">{t('nav.tours')}</a>
+              <a href="/" className="text-gray-300 hover:text-white transition-colors font-medium">{t('nav.home')}</a>
+              <a href="#services" className="text-gray-300 hover:text-white transition-colors font-medium">{t('nav.services')}</a>
+              <a href="#restaurants" className="text-gray-300 hover:text-white transition-colors font-medium">{t('nav.restaurants')}</a>
+              <a href="/today" className="text-gray-300 hover:text-white transition-colors font-medium">{t('what_to_do_today')}</a>
               <div className="relative group">
-                <button className="text-gray-300 hover:text-white transition-colors flex items-center space-x-1">
+                <button className="text-gray-300 hover:text-white transition-colors flex items-center space-x-1 font-medium">
                   <span>Hooajad</span>
                   <ChevronDown className="h-4 w-4" />
                 </button>
@@ -584,12 +582,10 @@ const HomePage = () => {
                   </Link>
                 </div>
               </div>
-              <a href="/pricing" className="text-gray-300 hover:text-white transition-colors">{t('nav.pricing')}</a>
-              <a href="#about" className="text-gray-300 hover:text-white transition-colors">{t('nav.about')}</a>
-              <a href="#contact" className="text-gray-300 hover:text-white transition-colors">{t('nav.contact')}</a>
+              <a href="/pricing" className="text-gray-300 hover:text-white transition-colors font-medium">{t('nav.pricing')}</a>
             </nav>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 absolute right-0">
               {/* Language Switcher */}
               <div className="relative" ref={languageDropdownRef}>
                 <button
