@@ -10,9 +10,11 @@ import SeasonsListPage from './pages/SeasonsListPage';
 import SeasonalSection from './components/SeasonalSection';
 import TodayPage from './pages/TodayPage';
 import WidgetPage from './pages/WidgetPage';
+import { useSubscription } from './hooks/useSubscription';
 
 const HomePage = () => {
   const { t, i18n } = useTranslation();
+  const { hasFeature, userPlan } = useSubscription();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnnually, setIsAnnually] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -40,6 +42,10 @@ const HomePage = () => {
     postalCode: '',
     yourRole: 'Owner',
     businessProfileImage: null,
+    businessDescription: '',
+    businessLogo: null,
+    featuredImage: null,
+    businessVideo: null,
     acknowledgment: false,
     termsConditions: false
   });
@@ -174,6 +180,10 @@ const HomePage = () => {
       postalCode: '',
       yourRole: 'Owner',
       businessProfileImage: null,
+      businessDescription: '',
+      businessLogo: null,
+      featuredImage: null,
+      businessVideo: null,
       acknowledgment: false,
       termsConditions: false
     });
@@ -856,13 +866,31 @@ const HomePage = () => {
         </div>
       </footer>
 
-      {/* Modal - Parandatud versioon */}
+      {/* PARANDATUD BUSINESS MODAL KOOS SUBSCRIPTION FEATURE GATING */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto relative">
             {/* Modal Header koos X nupuga */}
             <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white z-10">
-              <h2 className="text-2xl font-bold text-gray-800">{t('modal.title')}</h2>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">{t('modal.title')}</h2>
+                {/* Subscription status näidik */}
+                <div className="flex items-center space-x-2 mt-1">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    userPlan === 'free' ? 'bg-gray-100 text-gray-600' :
+                    userPlan === 'golden' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-purple-100 text-purple-700'
+                  }`}>
+                    {userPlan === 'free' ? 'FREE PLAN' : 
+                     userPlan === 'golden' ? 'GOLDEN PLAN' : 'PREMIUM PLUS'}
+                  </span>
+                  {userPlan === 'free' && (
+                    <a href="/pricing" className="text-blue-600 hover:text-blue-800 text-xs">
+                      Upgrade for more features →
+                    </a>
+                  )}
+                </div>
+              </div>
               <button 
                 onClick={closeModal}
                 className="text-gray-500 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-100"
@@ -875,6 +903,8 @@ const HomePage = () => {
             {/* Modal Body */}
             <form onSubmit={handleSubmit} className="p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* ALATI NÄHTAVAD VÄLJAD */}
                 
                 {/* First Name */}
                 <div>
@@ -911,7 +941,7 @@ const HomePage = () => {
                 {/* Business Email */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.businessEmail')} *
+                    {t('modal.businessEmail')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <input
                     type="email"
@@ -927,7 +957,7 @@ const HomePage = () => {
                 {/* Your Email */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.yourEmail')} *
+                    {t('modal.yourEmail')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <input
                     type="email"
@@ -943,7 +973,7 @@ const HomePage = () => {
                 {/* Phone */}
                 <div className="md:col-span-2">
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.phone')} *
+                    {t('modal.phone')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <input
                     type="tel"
@@ -959,7 +989,7 @@ const HomePage = () => {
                 {/* Business Name */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.businessName')} *
+                    {t('modal.businessName')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <input
                     type="text"
@@ -975,7 +1005,7 @@ const HomePage = () => {
                 {/* Business Address */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.businessAddress')} *
+                    {t('modal.businessAddress')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <input
                     type="text"
@@ -988,10 +1018,180 @@ const HomePage = () => {
                   />
                 </div>
 
-                {/* Business City - PARANDATUD: kasutab sama linna nimekirja mis otsing */}
+                {/* PREMIUM FEATURES - CONDITIONAL RENDERING */}
+
+                {/* Business Description - Golden+ */}
+                <div className="md:col-span-2">
+                  <label className="flex items-center justify-between text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                    <span>
+                      Business Description 
+                      {hasFeature('business_description') ? (
+                        <span className="text-green-600 ml-2">✓ {userPlan.toUpperCase()}</span>
+                      ) : (
+                        <span className="text-orange-600 ml-2">🔒 GOLDEN+</span>
+                      )}
+                    </span>
+                    {!hasFeature('business_description') && (
+                      <a href="/pricing" className="text-blue-600 hover:text-blue-800 text-xs normal-case">
+                        Upgrade to unlock
+                      </a>
+                    )}
+                  </label>
+                  {hasFeature('business_description') ? (
+                    <textarea
+                      name="businessDescription"
+                      value={formData.businessDescription || ''}
+                      onChange={handleInputChange}
+                      placeholder="Describe your business in detail..."
+                      rows={4}
+                      className="w-full px-3 py-3 bg-gray-100 border-0 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                    />
+                  ) : (
+                    <div className="w-full px-3 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-md text-center text-gray-500">
+                      <div className="py-8">
+                        <div className="text-lg mb-2">🔒</div>
+                        <p>Business description available with Golden plan</p>
+                        <a href="/pricing" className="text-blue-600 hover:text-blue-800 font-medium">
+                          Upgrade to unlock
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Business Logo - Golden+ */}
+                <div>
+                  <label className="flex items-center justify-between text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                    <span>
+                      Business Logo
+                      {hasFeature('business_logo') ? (
+                        <span className="text-green-600 ml-2">✓ {userPlan.toUpperCase()}</span>
+                      ) : (
+                        <span className="text-orange-600 ml-2">🔒 GOLDEN+</span>
+                      )}
+                    </span>
+                  </label>
+                  {hasFeature('business_logo') ? (
+                    <div className="relative">
+                      <input
+                        type="file"
+                        name="businessLogo"
+                        onChange={handleInputChange}
+                        accept="image/*"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="w-full px-3 py-3 bg-gray-100 border-0 rounded-md text-gray-700 cursor-pointer flex items-center justify-between">
+                        <span className="text-gray-500">
+                          {formData.businessLogo ? formData.businessLogo.name : 'Choose logo file...'}
+                        </span>
+                        <button type="button" className="bg-gray-300 px-3 py-1 rounded text-sm">
+                          Browse...
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full px-3 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-md text-center text-gray-500">
+                      <div className="py-4">
+                        <div className="text-sm">🔒 Logo upload - Golden plan</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Featured Image - Golden+ */}
+                <div>
+                  <label className="flex items-center justify-between text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                    <span>
+                      Featured Image
+                      {hasFeature('featured_image') ? (
+                        <span className="text-green-600 ml-2">✓ {userPlan.toUpperCase()}</span>
+                      ) : (
+                        <span className="text-orange-600 ml-2">🔒 GOLDEN+</span>
+                      )}
+                    </span>
+                  </label>
+                  {hasFeature('featured_image') ? (
+                    <div className="relative">
+                      <input
+                        type="file"
+                        name="featuredImage"
+                        onChange={handleInputChange}
+                        accept="image/*"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="w-full px-3 py-3 bg-gray-100 border-0 rounded-md text-gray-700 cursor-pointer flex items-center justify-between">
+                        <span className="text-gray-500">
+                          {formData.featuredImage ? formData.featuredImage.name : 'Choose featured image...'}
+                        </span>
+                        <button type="button" className="bg-gray-300 px-3 py-1 rounded text-sm">
+                          Browse...
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full px-3 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-md text-center text-gray-500">
+                      <div className="py-4">
+                        <div className="text-sm">🔒 Featured image - Golden plan</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Video Upload - Premium Plus only */}
+                <div className="md:col-span-2">
+                  <label className="flex items-center justify-between text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                    <span>
+                      Business Video
+                      {hasFeature('video') ? (
+                        <span className="text-green-600 ml-2">✓ PREMIUM PLUS</span>
+                      ) : (
+                        <span className="text-purple-600 ml-2">🔒 PREMIUM PLUS</span>
+                      )}
+                    </span>
+                    {!hasFeature('video') && (
+                      <a href="/pricing" className="text-blue-600 hover:text-blue-800 text-xs normal-case">
+                        Upgrade to Premium Plus
+                      </a>
+                    )}
+                  </label>
+                  {hasFeature('video') ? (
+                    <div className="relative">
+                      <input
+                        type="file"
+                        name="businessVideo"
+                        onChange={handleInputChange}
+                        accept="video/*"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      />
+                      <div className="w-full px-3 py-3 bg-gray-100 border-0 rounded-md text-gray-700 cursor-pointer flex items-center justify-between">
+                        <span className="text-gray-500">
+                          {formData.businessVideo ? formData.businessVideo.name : 'Choose video file...'}
+                        </span>
+                        <button type="button" className="bg-gray-300 px-3 py-1 rounded text-sm">
+                          Browse...
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full px-3 py-3 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-dashed border-purple-300 rounded-md text-center text-purple-700">
+                      <div className="py-8">
+                        <div className="text-2xl mb-3">🎬</div>
+                        <h4 className="font-semibold mb-2">Premium Video Upload</h4>
+                        <p className="text-sm mb-3">Upload promotional videos with Premium Plus plan</p>
+                        <a href="/pricing" className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                          Upgrade to Premium Plus
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* ALATI NÄHTAVAD VÄLJAD JÄTKUVAD */}
+
+                {/* Business City */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.businessCity')} *
+                    {t('modal.businessCity')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <select
                     name="businessCity"
@@ -1007,26 +1207,10 @@ const HomePage = () => {
                   </select>
                 </div>
 
-                {/* Business State */}
+                {/* Business Country */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.businessState')} *
-                  </label>
-                  <input
-                    type="text"
-                    name="businessState"
-                    value={formData.businessState}
-                    onChange={handleInputChange}
-                    placeholder={t('modal.businessStatePlaceholder')}
-                    className="w-full px-3 py-3 bg-gray-100 border-0 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                    required
-                  />
-                </div>
-
-                {/* Business Country - PARANDATUD: täielik riikide nimekiri */}
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.businessCountry')} *
+                    {t('modal.businessCountry')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <select
                     name="businessCountry"
@@ -1045,7 +1229,7 @@ const HomePage = () => {
                 {/* Postal Code */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.postalCode')} *
+                    {t('modal.postalCode')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <input
                     type="text"
@@ -1058,10 +1242,10 @@ const HomePage = () => {
                   />
                 </div>
 
-                {/* Your Role - PARANDATUD: proper dropdown menu */}
+                {/* Your Role */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.yourRole')} *
+                    {t('modal.yourRole')} * <span className="text-green-600">✓ FREE</span>
                   </label>
                   <select
                     name="yourRole"
@@ -1076,30 +1260,60 @@ const HomePage = () => {
                     ))}
                   </select>
                 </div>
+              </div>
 
-                {/* Business Profile Image */}
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                    {t('modal.businessProfileImage')}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      name="businessProfileImage"
-                      onChange={handleInputChange}
-                      accept="image/*"
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="w-full px-3 py-3 bg-gray-100 border-0 rounded-md text-gray-700 cursor-pointer flex items-center justify-between">
-                      <span className="text-gray-500">
-                        {formData.businessProfileImage ? formData.businessProfileImage.name : t('modal.businessProfileImagePlaceholder')}
-                      </span>
-                      <button type="button" className="bg-gray-300 px-3 py-1 rounded text-sm">
-                        Selaa...
-                      </button>
-                    </div>
+              {/* Feature Summary */}
+              <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold text-gray-800 mb-3">Your Plan Features:</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Basic listing</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Contact info</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={hasFeature('business_logo') ? 'text-green-600' : 'text-gray-400'}>
+                      {hasFeature('business_logo') ? '✓' : '✗'}
+                    </span>
+                    <span className={hasFeature('business_logo') ? '' : 'text-gray-400'}>
+                      Logo upload
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={hasFeature('video') ? 'text-green-600' : 'text-gray-400'}>
+                      {hasFeature('video') ? '✓' : '✗'}
+                    </span>
+                    <span className={hasFeature('video') ? '' : 'text-gray-400'}>
+                      Video upload
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={hasFeature('google_maps') ? 'text-green-600' : 'text-gray-400'}>
+                      {hasFeature('google_maps') ? '✓' : '✗'}
+                    </span>
+                    <span className={hasFeature('google_maps') ? '' : 'text-gray-400'}>
+                      Google Maps
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={hasFeature('reviews') ? 'text-green-600' : 'text-gray-400'}>
+                      {hasFeature('reviews') ? '✓' : '✗'}
+                    </span>
+                    <span className={hasFeature('reviews') ? '' : 'text-gray-400'}>
+                      Reviews
+                    </span>
                   </div>
                 </div>
+                {userPlan === 'free' && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <a href="/pricing" className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                      Upgrade your plan to unlock all features →
+                    </a>
+                  </div>
+                )}
               </div>
 
               {/* Acknowledgment Section */}
