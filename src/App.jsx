@@ -14,7 +14,30 @@ import { useSubscription } from './hooks/useSubscription';
 
 const HomePage = () => {
   const { t, i18n } = useTranslation();
-  const { hasFeature, userPlan } = useSubscription();
+  const { hasFeature, userPlan, setTestPlan } = useSubscription();
+
+  // TESTING: Tee testPlan funktsioon globaalselt kättesaadavaks
+  useEffect(() => {
+    window.testSubscription = {
+      setFree: () => setTestPlan('free'),
+      setGolden: () => setTestPlan('golden'),
+      setPremium: () => setTestPlan('premium_plus'),
+      current: () => console.log(`Current plan: ${userPlan}`),
+      help: () => console.log(`
+🧪 SUBSCRIPTION TESTING UTILITIES:
+- testSubscription.setFree()    - Switch to FREE plan  
+- testSubscription.setGolden()  - Switch to GOLDEN plan
+- testSubscription.setPremium() - Switch to PREMIUM PLUS plan
+- testSubscription.current()    - Show current plan
+- testSubscription.help()       - Show this help
+
+After changing plan, open "Lisää yritys" modal to see the changes!
+      `)
+    };
+    
+    // Näita juhend konsoolis
+    console.log('🧪 Subscription testing utilities loaded! Type testSubscription.help() for commands.');
+  }, [setTestPlan, userPlan]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnnually, setIsAnnually] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);

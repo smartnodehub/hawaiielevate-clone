@@ -41,7 +41,18 @@ export const useSubscription = () => {
   // Mock function to upgrade plan
   const upgradePlan = (newPlan) => {
     setUserPlan(newPlan);
+    // TESTING: Salvesta localStorage'sse
+    localStorage.setItem('test_subscription_plan', newPlan);
     // Päris rakenduses siin oleks API kutse
+  };
+
+  // TESTING UTILITY: Plaani vahetamine testimiseks
+  const setTestPlan = (plan) => {
+    if (['free', 'golden', 'premium_plus'].includes(plan)) {
+      localStorage.setItem('test_subscription_plan', plan);
+      setUserPlan(plan);
+      console.log(`🔄 Test plan changed to: ${plan.toUpperCase()}`);
+    }
   };
 
   // Mock function to load user subscription from API
@@ -49,19 +60,21 @@ export const useSubscription = () => {
     // Päris rakenduses siin laaditaks kasutaja subscription andmed
     // fetch('/api/user/subscription').then(...)
     
-    // Demo jaoks näitame erinevaid plaane
-    const mockPlans = ['free', 'golden', 'premium_plus'];
-    const randomPlan = mockPlans[Math.floor(Math.random() * mockPlans.length)];
-    // setUserPlan(randomPlan);
-    
-    // Testime praegu 'free' plaaniga
-    setUserPlan('free');
+    // TESTING: Kontrolli localStorage'st test plaani
+    const testPlan = localStorage.getItem('test_subscription_plan');
+    if (testPlan && ['free', 'golden', 'premium_plus'].includes(testPlan)) {
+      setUserPlan(testPlan);
+    } else {
+      // Default 'free' plaan
+      setUserPlan('free');
+    }
   }, []);
 
   return {
     userPlan,
     hasFeature,
     upgradePlan,
-    featuresByPlan
+    featuresByPlan,
+    setTestPlan // TESTING utility
   };
 }; 
