@@ -32,8 +32,76 @@ const PricingPage = () => {
     lastName: ''
   });
 
-  const kategoriad = ['Ravintolat', 'Hotellit', 'Kiertoajelut', 'Ostokset', 'Palvelut', 'Kiinteistöt'];
-  const kunnat = ['Helsinki', 'Tampere', 'Turku', 'Oulu', 'Espoo', 'Vantaa'];
+  const kategoriad = [
+  // Teenused
+  'Ravintolat ja kahvilat',
+  'Hotellit ja majoitus',
+  'Kauneuspalvelut',
+  'Hiuspalvelut', 
+  'Kynsipalvelut',
+  'Hieronta ja spa',
+  'Hammaslääkärit',
+  'Lääkärit',
+  'Eläinlääkärit',
+  
+  // Kauppa
+  'Ruokakaupat',
+  'Vaatekaupat',
+  'Elektroniikka',
+  'Huonekalut',
+  'Kirjakaupat',
+  'Kukkakauparát',
+  'Apteekit',
+  
+  // Palvelut
+  'Lakipalvelut',
+  'Kirjanpitopalvelut', 
+  'IT-palvelut',
+  'Markkinointipalvelut',
+  'Siivouspalvelut',
+  'Rakennuspalvelut',
+  'Korjauspalvelut',
+  'Autokorjaamot',
+  
+  // Viihde & Urheilu
+  'Kuntosalit',
+  'Uimahallir',
+  'Elokuvateatterit',
+  'Museot',
+  'Kiertoajelut',
+  
+  // Koulutus
+  'Koulut',
+  'Päiväkodit',
+  'Musiikkikoulut',
+  'Kielikoulut',
+  
+  // Muut
+  'Pankit',
+  'Vakuutusyhtiöt',
+  'Kiinteistöpalvelut',
+  'Kuljetuspalvelut'
+];
+  const kunnat = [
+  'Akaa', 'Alajärvi', 'Alavieska', 'Alavus', 'Asikkala', 'Askola', 'Aura',
+  'Brändö', 'Eckerö', 'Enonkoski', 'Enontekiö', 'Espoo', 'Eura', 'Eurajoki', 'Evijärvi',
+  'Finström', 'Forssa', 'Föglö', 'Geta',
+  'Haapajärvi', 'Haapavesi', 'Hailuoto', 'Halsua', 'Hamina', 'Hammarland', 'Hankasalmi', 'Hanko', 'Harjavalta', 'Hartola', 'Hattula', 'Hausjärvi', 'Heinola', 'Heinävesi', 'Helsinki', 'Hirvensalmi', 'Hollola', 'Huittinen', 'Humppila', 'Hyrynsalmi', 'Hyvinkää', 'Hämeenkyrö', 'Hämeenlinna',
+  'Ii', 'Iisalmi', 'Iitti', 'Ikaalinen', 'Ilmajoki', 'Ilomantsi', 'Imatra', 'Inari', 'Inkoo', 'Isojoki', 'Isokyrö',
+  'Jalasjärvi', 'Janakkala', 'Joensuu', 'Jokioinen', 'Jomala', 'Joroinen', 'Joutsa', 'Juuka', 'Juupajoki', 'Juva', 'Jyväskylä', 'Jämijärvi', 'Jämsä', 'Järvenpää',
+  'Kaarina', 'Kaavi', 'Kajaani', 'Kalajoki', 'Kangasala', 'Kangasniemi', 'Kankaanpää', 'Kannonkoski', 'Kannus', 'Karijoki', 'Karkkila', 'Karstula', 'Karvia', 'Kaskinen', 'Kauhajoki', 'Kauhava', 'Kauniainen', 'Kaustinen', 'Keitele', 'Kemi', 'Kemijärvi', 'Keminmaa', 'Kemiönsaari', 'Kempele', 'Kerava', 'Keuruu', 'Kihniö', 'Kinnula', 'Kirkkonummi', 'Kitee', 'Kittilä', 'Kiuruvesi', 'Kivijärvi', 'Kokemäki', 'Kokkola', 'Kolari', 'Konnevesi', 'Kontiolahti', 'Korsnäs', 'Koski Tl', 'Kotka', 'Kouvola', 'Kristiinankaupunki', 'Kruunupyy', 'Kuhmo', 'Kuhmoinen', 'Kumlinge', 'Kuopio', 'Kuortane', 'Kurikka', 'Kustavi', 'Kuusamo', 'Kyyjärvi', 'Kärkölä', 'Kärsämäki', 'Kökar', 'Köyliö',
+  'Lahti', 'Laihia', 'Laitila', 'Lapinjärvi', 'Lapinlahti', 'Lappajärvi', 'Lappeenranta', 'Lapua', 'Laukaa', 'Lavia', 'Lemi', 'Lemland', 'Lempäälä', 'Leppävirta', 'Lestijärvi', 'Lieksa', 'Lieto', 'Liminka', 'Liperi', 'Lohja', 'Loimaa', 'Loppi', 'Loviisa', 'Luhanka', 'Lumijoki', 'Lumparland', 'Luoto', 'Luumäki', 'Länsi-Turunmaa',
+  'Maalahti', 'Maarianhamina', 'Marttila', 'Masku', 'Merijärvi', 'Merikarvia', 'Miehikkälä', 'Mikkeli', 'Muhos', 'Multia', 'Muonio', 'Mustasaari', 'Muurame', 'Mynämäki', 'Myrskylä', 'Mäntsälä', 'Mäntyharju', 'Mänttä-Vilppula',
+  'Naantali', 'Nakkila', 'Nastola', 'Nilsiä', 'Nivala', 'Nokia', 'Noormarkku', 'Nousiainen', 'Nurmes', 'Nurmijärvi', 'Närpiö', 'Nykarleby',
+  'Orimattila', 'Oripää', 'Orivesi', 'Oulainen', 'Oulu', 'Outokumpu', 'Outokumpu',
+  'Padasjoki', 'Paimio', 'Paltamo', 'Parainen', 'Parikkala', 'Parkano', 'Pedersöre', 'Pelkosenniemi', 'Pello', 'Perho', 'Pertunmaa', 'Petäjävesi', 'Pieksämäki', 'Pielavesi', 'Pietarsaari', 'Pihtipudas', 'Pirkkala', 'Polvijärvi', 'Pomarkku', 'Pori', 'Pornainen', 'Porvoo', 'Posio', 'Pudasjärvi', 'Pukkila', 'Punkalaidun', 'Puolanka', 'Puumala', 'Pyhtää', 'Pyhäjoki', 'Pyhäjärvi', 'Pyhäntä', 'Pyhäranta', 'Pälkäne', 'Pöytyä',
+  'Raahe', 'Raasepori', 'Raisio', 'Rantasalmi', 'Ranua', 'Rauma', 'Rautalampi', 'Rautavaara', 'Rautjärvi', 'Reisjärvi', 'Riihimäki', 'Ristiina', 'Ristijärvi', 'Rovaniemi', 'Ruokolahti', 'Ruovesi', 'Rusko', 'Rääkkylä',
+  'Saarijärvi', 'Salla', 'Salo', 'Saltvik', 'Sastamala', 'Sauvo', 'Savitaipale', 'Savonlinna', 'Savukoski', 'Seinäjoki', 'Sievi', 'Siikainen', 'Siikajoki', 'Siilinjärvi', 'Simo', 'Sipoo', 'Siuntio', 'Sodankylä', 'Soini', 'Somero', 'Sonkajärvi', 'Sotkamo', 'Sottunga', 'Sulkava', 'Sund', 'Suomussalmi', 'Suonenjoki', 'Sysmä', 'Säkylä', 'Särkisalo',
+  'Taipalsaari', 'Taivalkoski', 'Taivassalo', 'Tammela', 'Tampere', 'Tarvasjoki', 'Tervo', 'Tervola', 'Teuva', 'Tohmajärvi', 'Toholampi', 'Toivakka', 'Tornio', 'Turku', 'Tuusniemi', 'Tuusula', 'Tyrnävä', 'Tähti', 'Töysä',
+  'Ulvila', 'Urjala', 'Utajärvi', 'Utsjoki', 'Uurainen', 'Uusikaarlepyy', 'Uusikaupunki',
+  'Vaala', 'Vaasa', 'Valkeakoski', 'Valtimo', 'Vantaa', 'Varkaus', 'Vehmaa', 'Velha', 'Vesanto', 'Vesilahti', 'Veteli', 'Vieremä', 'Vihti', 'Viitasaari', 'Vimpeli', 'Virolahti', 'Virrat', 'Vårdö', 'Vöyri',
+  'Ylitornio', 'Ylivieska', 'Ylöjärvi', 'Ypäjä', 'Ähtäri', 'Äänekoski'
+];
 
   // ... existing code for handlers ...
   const openModal = () => setIsModalOpen(true);
@@ -219,7 +287,7 @@ const PricingPage = () => {
               <a href="#services" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
               <a href="#restaurants" className="text-gray-300 hover:text-white transition-colors">{t('nav.restaurants')}</a>
               <a href="#designers" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
-              <a href="#breakfast" className="text-gray-300 hover:text-white transition-colors">{t('nav.bb')}</a>
+              <a href="/today" className="text-gray-300 hover:text-white transition-colors">{t('what_to_do_today')}</a>
               <a href="#todo" className="text-gray-300 hover:text-white transition-colors">{t('nav.tours')}</a>
               <a href="/pricing" className="text-blue-400 hover:text-white transition-colors">{t('nav.pricing')}</a>
               <a href="#about" className="text-gray-300 hover:text-white transition-colors">{t('nav.about')}</a>
