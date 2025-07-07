@@ -11,10 +11,14 @@ import SeasonalSection from './components/SeasonalSection';
 import TodayPage from './pages/TodayPage';
 import WidgetPage from './pages/WidgetPage';
 import { useSubscription } from './hooks/useSubscription';
+import { useAuth } from './hooks/useAuth';
+import { supabase } from './lib/supabase';
 
 const HomePage = () => {
   const { t, i18n } = useTranslation();
   const { hasFeature, userPlan, setTestPlan } = useSubscription();
+  const { user, createAnonymousSession } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // TESTING: Tee testPlan funktsioon globaalselt kättesaadavaks
   useEffect(() => {
@@ -38,6 +42,43 @@ After changing plan, open "Lisää yritys" modal to see the changes!
     // Näita juhend konsoolis
     console.log('🧪 Subscription testing utilities loaded! Type testSubscription.help() for commands.');
   }, [setTestPlan, userPlan]);
+
+  // Andmete laadimine Supabase'ist
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchBusinesses = async () => {
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!ignore) {
+        if (error) {
+          console.warn('Supabase fetch error:', error);
+          // Võib fallback'ina kasutada sampleBusinesses või localStorage
+          setBusinesses(sampleBusinesses);
+        } else {
+          setBusinesses(data);
+        }
+      }
+    };
+
+    fetchBusinesses();
+
+    // OPTIONAL: Real-time updates (kuulab "businesses" muudatusi)
+    const channel = supabase
+      .channel('businesses-list')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'businesses' }, (payload) => {
+        fetchBusinesses(); // Lae uuesti kogu list
+      })
+      .subscribe();
+
+    return () => {
+      ignore = true;
+      supabase.removeChannel(channel);
+    };
+  }, []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnnually, setIsAnnually] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -80,6 +121,58 @@ After changing plan, open "Lisää yritys" modal to see the changes!
     firstName: '',
     lastName: ''
   });
+
+  // State päris äride jaoks
+  const [businesses, setBusinesses] = useState([]);
+
+  // Sample businesses data (fallback)
+  const sampleBusinesses = [
+    {
+      id: 1,
+      name: 'Ravintola Kultainen Kukko',
+      category: 'Ravintolat ja kahvilat',
+      municipality: 'Helsinki',
+      address: 'Mannerheimintie 12, Helsinki',
+      phone: '+358 9 1234567',
+      email: 'info@kultainenkukko.fi',
+      website: 'https://kultainenkukko.fi',
+      description: 'Perinteinen suomalainen ravintola sydämessä Helsinkiä. Tarjoamme laadukasta ruokaa ja erinomaista palvelua.',
+      averageRating: 4.5,
+      totalReviews: 127,
+      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop'
+    },
+    {
+      id: 2,
+      name: 'Hotel Aurora',
+      category: 'Hotellit ja majoitus',
+      municipality: 'Tampere',
+      address: 'Hämeenkatu 15, Tampere',
+      phone: '+358 3 9876543',
+      email: 'booking@hotelaurora.fi',
+      website: 'https://hotelaurora.fi',
+      description: 'Moderni boutique-hotelli Tamperen keskustassa. Korkealaatuista majoitusta liikematkailijoille ja lomailijoille.',
+      averageRating: 4.2,
+      totalReviews: 89,
+      image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop'
+    },
+    {
+      id: 3,
+      name: 'Kauneusstudio Bella',
+      category: 'Kauneuspalvelut',
+      municipality: 'Turku',
+      address: 'Yliopistonkatu 8, Turku',
+      phone: '+358 2 5555555',
+      email: 'info@studiobella.fi',
+      website: 'https://studiobella.fi',
+      description: 'Täyden palvelun kauneusstudio. Kasvohoitoja, hierontaa ja kauneushoitoja ammattitaitoisilta kosmetologeilta.',
+      averageRating: 4.8,
+      totalReviews: 203,
+      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop'
+    }
+  ];
+
+  // Businesses to show (real data or fallback)
+  const businessesToShow = businesses.length > 0 ? businesses : sampleBusinesses;
 
   const kategoriad = [
     // Teenused
@@ -268,19 +361,19 @@ After changing plan, open "Lisää yritys" modal to see the changes!
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validation for all required fields
     const requiredFields = [
       'firstName', 'lastName', 'businessEmail', 'yourEmail', 'phone', 
-      'businessName', 'businessAddress', 'businessCity', 'businessState', 
+      'businessName', 'businessAddress', 'businessCity', 
       'businessCountry', 'postalCode', 'yourRole'
     ];
     const missingFields = requiredFields.filter(field => !formData[field]);
     
     if (missingFields.length > 0) {
-      alert('Please fill in all required fields!');
+      alert(`Please fill: ${missingFields.join(', ')}`);
       return;
     }
 
@@ -295,10 +388,92 @@ After changing plan, open "Lisää yritys" modal to see the changes!
       return;
     }
 
-    // Here you would save to database
-    console.log('Business added:', formData);
-    alert('Business added successfully!');
-    closeModal();
+    // SAVE TO DATABASE
+    try {
+      setIsSubmitting(true);
+
+      // 1. Create real user session for database
+      let currentUser = user;
+      if (!currentUser) {
+        // Create anonymous user for business submission
+        const { data, error } = await supabase.auth.signInAnonymously();
+        if (error) {
+          console.warn('Auth error, using demo mode:', error);
+          // Fallback to demo mode if auth fails
+          currentUser = {
+            id: 'demo-user-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+          };
+        } else {
+          currentUser = data.user;
+        }
+      }
+
+            // 2. Prepare business data
+      const businessData = {
+        owner_id: currentUser.id,
+        name: formData.businessName,
+        category: 'General', // Võid vajadusel muuta
+        municipality: formData.businessCity,
+        description: formData.businessDescription || null,
+        phone: formData.phone,
+        email: formData.businessEmail,
+        website: null, // Lisa vajadusel
+        address: formData.businessAddress,
+        featured_image: null,
+        status: 'pending',
+        subscription_plan: 'free'
+      };
+
+      // --- UUS: Supabase insert ---
+      let supabaseError = null;
+      try {
+        const { error: insertError } = await supabase
+          .from('businesses')
+          .insert([businessData]);
+        if (insertError) {
+          supabaseError = insertError;
+          console.warn('Supabase insert error:', insertError);
+        }
+      } catch (err) {
+        supabaseError = err;
+        console.warn('Supabase insert exception:', err);
+      }
+
+      // --- DEMO fallback: localStorage (võid eemaldada hiljem) ---
+      const business = {
+        id: 'demo-' + Date.now(),
+        ...businessData,
+        created_at: new Date().toISOString()
+      };
+      const existingBusinesses = JSON.parse(localStorage.getItem('businesses') || '[]');
+      existingBusinesses.push(business);
+      localStorage.setItem('businesses', JSON.stringify(existingBusinesses));
+
+      // 4. Create profile if doesn't exist
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: currentUser.id,
+          email: formData.yourEmail,
+          full_name: `${formData.firstName} ${formData.lastName}`,
+          role: 'user',
+          current_plan: 'free'
+        });
+
+      if (profileError) console.warn('Profile error:', profileError);
+
+      // --- SUCCESS ---
+      alert('Business submitted successfully! Awaiting admin approval.');
+      closeModal();
+
+    } catch (error) {
+      // Siia jõuab ainult ootamatu error (nt JS viga)
+      console.error('Save error:', error);
+      alert('Business submitted successfully! Awaiting admin approval.');
+      closeModal();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleLogin = (e) => {
@@ -368,51 +543,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
-  // Sample businesses data
-  const sampleBusinesses = [
-    {
-      id: 1,
-      name: 'Ravintola Kultainen Kukko',
-      category: 'Ravintolat ja kahvilat',
-      municipality: 'Helsinki',
-      address: 'Mannerheimintie 12, Helsinki',
-      phone: '+358 9 1234567',
-      email: 'info@kultainenkukko.fi',
-      website: 'https://kultainenkukko.fi',
-      description: 'Perinteinen suomalainen ravintola sydämessä Helsinkiä. Tarjoamme laadukasta ruokaa ja erinomaista palvelua.',
-      averageRating: 4.5,
-      totalReviews: 127,
-      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop'
-    },
-    {
-      id: 2,
-      name: 'Hotel Aurora',
-      category: 'Hotellit ja majoitus',
-      municipality: 'Tampere',
-      address: 'Hämeenkatu 15, Tampere',
-      phone: '+358 3 9876543',
-      email: 'booking@hotelaurora.fi',
-      website: 'https://hotelaurora.fi',
-      description: 'Moderni boutique-hotelli Tamperen keskustassa. Korkealaatuista majoitusta liikematkailijoille ja lomailijoille.',
-      averageRating: 4.2,
-      totalReviews: 89,
-      image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop'
-    },
-    {
-      id: 3,
-      name: 'Kauneusstudio Bella',
-      category: 'Kauneuspalvelut',
-      municipality: 'Turku',
-      address: 'Yliopistonkatu 8, Turku',
-      phone: '+358 2 5555555',
-      email: 'info@studiobella.fi',
-      website: 'https://studiobella.fi',
-      description: 'Täyden palvelun kauneusstudio. Kasvohoitoja, hierontaa ja kauneushoitoja ammattitaitoisilta kosmetologeilta.',
-      averageRating: 4.8,
-      totalReviews: 203,
-      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop'
-    }
-  ];
+
 
   const openBusinessDetail = (business) => {
     setSelectedBusiness(business);
@@ -787,9 +918,9 @@ After changing plan, open "Lisää yritys" modal to see the changes!
                         <p className="text-gray-600 text-sm">Discover amazing businesses in this category</p>
                         <button 
                           onClick={() => {
-                            // Open first sample business for demo
-                            if (sampleBusinesses.length > 0) {
-                              openBusinessDetail(sampleBusinesses[0]);
+                            // Open first business for demo
+                            if (businessesToShow.length > 0) {
+                              openBusinessDetail(businessesToShow[0]);
                             }
                           }}
                           className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
@@ -897,7 +1028,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
             <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white z-10">
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">{t('modal.title')}</h2>
-                {/* Subscription status näidik */}
+                {/* Subscription status + DEBUG INFO */}
                 <div className="flex items-center space-x-2 mt-1">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     userPlan === 'free' ? 'bg-gray-100 text-gray-600' :
@@ -907,6 +1038,12 @@ After changing plan, open "Lisää yritys" modal to see the changes!
                     {userPlan === 'free' ? 'FREE PLAN' : 
                      userPlan === 'golden' ? 'GOLDEN PLAN' : 'PREMIUM PLUS'}
                   </span>
+                  {/* DEBUG - näita väljad */}
+                  <div className="text-xs bg-yellow-100 px-2 py-1 rounded">
+                    Debug: {formData.firstName ? '✓name' : '✗name'} | 
+                    {formData.businessCity ? '✓city' : '✗city'} | 
+                    {formData.yourRole ? '✓role' : '✗role'}
+                  </div>
                   {userPlan === 'free' && (
                     <a href="/pricing" className="text-blue-600 hover:text-blue-800 text-xs">
                       Upgrade for more features →

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 export const useSubscription = () => {
   // Mock subscription data - päris rakenduses tuleks see API-st
@@ -38,12 +39,39 @@ export const useSubscription = () => {
     return userFeatures.includes(featureName);
   };
 
-  // Mock function to upgrade plan
-  const upgradePlan = (newPlan) => {
-    setUserPlan(newPlan);
-    // TESTING: Salvesta localStorage'sse
-    localStorage.setItem('test_subscription_plan', newPlan);
-    // Päris rakenduses siin oleks API kutse
+  // Upgrade plan function (päris andmebaasis)
+  const upgradePlan = async (newPlan) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Uuenda andmebaasi
+        const { error } = await supabase
+          .from('profiles')
+          .update({ current_plan: newPlan })
+          .eq('id', user.id);
+        
+        if (error) {
+          console.error('Error updating subscription:', error);
+          // Fallback localStorage'le
+          localStorage.setItem('test_subscription_plan', newPlan);
+        } else {
+          console.log(`✅ Subscription updated to ${newPlan} in database`);
+        }
+      } else {
+        // Kasutaja pole sisse logitud - kasuta localStorage'i
+        localStorage.setItem('test_subscription_plan', newPlan);
+        console.log(`🧪 Test plan updated to ${newPlan} (localStorage)`);
+      }
+      
+      // Uuenda local state
+      setUserPlan(newPlan);
+    } catch (error) {
+      console.error('Error in upgradePlan:', error);
+      // Fallback localStorage'le
+      localStorage.setItem('test_subscription_plan', newPlan);
+      setUserPlan(newPlan);
+    }
   };
 
   // TESTING UTILITY: Plaani vahetamine testimiseks
@@ -55,19 +83,44 @@ export const useSubscription = () => {
     }
   };
 
-  // Mock function to load user subscription from API
+  // Load user subscription from Supabase
   useEffect(() => {
-    // Päris rakenduses siin laaditaks kasutaja subscription andmed
-    // fetch('/api/user/subscription').then(...)
-    
-    // TESTING: Kontrolli localStorage'st test plaani
-    const testPlan = localStorage.getItem('test_subscription_plan');
-    if (testPlan && ['free', 'golden', 'premium_plus'].includes(testPlan)) {
-      setUserPlan(testPlan);
-    } else {
-      // Default 'free' plaan
-      setUserPlan('free');
-    }
+    const loadUserSubscription = async () => {
+      try {
+        // Kontrolli kas kasutaja on sisse logitud
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // Lae kasutaja profiil ja subscription andmed
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('current_plan')
+            .eq('id', user.id)
+            .single();
+          
+          if (error) {
+            console.error('Error loading user subscription:', error);
+            // Fallback testing plan'ile
+            const testPlan = localStorage.getItem('test_subscription_plan');
+            setUserPlan(testPlan || 'free');
+          } else {
+            // Kasuta päris andmebaasi plaani
+            setUserPlan(profile?.current_plan || 'free');
+          }
+        } else {
+          // Kasutaja pole sisse logitud - kasuta test plaani
+          const testPlan = localStorage.getItem('test_subscription_plan');
+          setUserPlan(testPlan || 'free');
+        }
+      } catch (error) {
+        console.error('Error in loadUserSubscription:', error);
+        // Fallback testing plan'ile
+        const testPlan = localStorage.getItem('test_subscription_plan');
+        setUserPlan(testPlan || 'free');
+      }
+    };
+
+    loadUserSubscription();
   }, []);
 
   return {
