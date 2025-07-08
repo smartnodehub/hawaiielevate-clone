@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Phone, Mail, MapPin, Star, Users, Award, Heart, X, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import PricingPage from './PricingPage';
@@ -10,6 +10,7 @@ import SeasonsListPage from './pages/SeasonsListPage';
 import SeasonalSection from './components/SeasonalSection';
 import TodayPage from './pages/TodayPage';
 import WidgetPage from './pages/WidgetPage';
+import BusinessDetailPage from './pages/BusinessDetailPage';
 import { useSubscription } from './hooks/useSubscription';
 import { useAuth } from './AuthContext';
 import { supabase } from './supabaseClient';
@@ -19,6 +20,7 @@ const HomePage = () => {
   const { t, i18n } = useTranslation();
   const { hasFeature, userPlan, setTestPlan } = useSubscription();
   const { user, createAnonymousSession } = useAuth();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // TESTING: Tee testPlan funktsioon globaalselt kättesaadavaks
@@ -87,8 +89,6 @@ After changing plan, open "Lisää yritys" modal to see the changes!
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [selectedBusiness, setSelectedBusiness] = useState(null);
-  const [showBusinessDetail, setShowBusinessDetail] = useState(false);
   const languageDropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -449,15 +449,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
 
 
 
-  const openBusinessDetail = (business) => {
-    setSelectedBusiness(business);
-    setShowBusinessDetail(true);
-  };
 
-  const closeBusinessDetail = () => {
-    setShowBusinessDetail(false);
-    setSelectedBusiness(null);
-  };
 
   const businessCards = [
     {
@@ -809,9 +801,9 @@ After changing plan, open "Lisää yritys" modal to see the changes!
                         <p className="text-gray-600 text-sm">Discover amazing businesses in this category</p>
                         <button 
                           onClick={() => {
-                            // Open first business for demo
+                            // Navigate to first business for demo
                             if (businessesToShow.length > 0) {
-                              openBusinessDetail(businessesToShow[0]);
+                              navigate(`/business/${businessesToShow[0].id}`);
                             }
                           }}
                           className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
@@ -1419,123 +1411,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
       {/* Auth Modal */}
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
 
-      {/* Business Detail Modal */}
-      {showBusinessDetail && selectedBusiness && (
-        <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
-            <div className="container mx-auto px-4 py-6">
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={closeBusinessDetail}
-                  className="flex items-center space-x-2 text-white hover:text-gray-200 transition-colors"
-                >
-                  <ArrowLeft className="h-6 w-6" />
-                  <span>Tagasi</span>
-                </button>
-                <h1 className="text-2xl font-bold">{selectedBusiness.name}</h1>
-                <div></div>
-              </div>
-            </div>
-          </div>
 
-          {/* Business Info */}
-          <div className="bg-white border-b">
-            <div className="container mx-auto px-4 py-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Main Info */}
-                <div className="lg:col-span-2">
-                  <div className="flex items-start space-x-4 mb-6">
-                    <img
-                      src={selectedBusiness.image}
-                      alt={selectedBusiness.name}
-                      className="w-24 h-24 rounded-lg object-cover"
-                    />
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                        {selectedBusiness.name}
-                      </h2>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-                          {selectedBusiness.category}
-                        </span>
-                        <span>{selectedBusiness.municipality}</span>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-2">
-                          <StarRating 
-                            rating={Math.round(selectedBusiness.averageRating)} 
-                            readonly 
-                            size="small" 
-                          />
-                          <span className="font-semibold text-gray-900">
-                            {selectedBusiness.averageRating}
-                          </span>
-                          <span className="text-gray-600">
-                            ({selectedBusiness.totalReviews} arvustust)
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 leading-relaxed">
-                    {selectedBusiness.description}
-                  </p>
-                </div>
-
-                {/* Contact Info */}
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Kontaktandmed
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="h-5 w-5 text-gray-400" />
-                      <span className="text-gray-700">{selectedBusiness.address}</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Phone className="h-5 w-5 text-gray-400" />
-                      <a
-                        href={`tel:${selectedBusiness.phone}`}
-                        className="text-blue-600 hover:underline"
-                      >
-                        {selectedBusiness.phone}
-                      </a>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Mail className="h-5 w-5 text-gray-400" />
-                      <a
-                        href={`mailto:${selectedBusiness.email}`}
-                        className="text-blue-600 hover:underline"
-                      >
-                        {selectedBusiness.email}
-                      </a>
-                    </div>
-                    {selectedBusiness.website && (
-                      <div className="flex items-center space-x-3">
-                        <span className="h-5 w-5 text-gray-400">🌐</span>
-                        <a
-                          href={selectedBusiness.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          Koduleht
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Reviews Section */}
-          <div className="container mx-auto px-4">
-            <Reviews business={selectedBusiness} />
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -1550,6 +1426,7 @@ const App = () => {
         <Route path="/season/:season" element={<SeasonalPage />} />
         <Route path="/today" element={<TodayPage />} />
         <Route path="/widget/today" element={<WidgetPage />} />
+        <Route path="/business/:id" element={<BusinessDetailPage />} />
       </Routes>
     </Router>
   );

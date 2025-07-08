@@ -3,9 +3,11 @@ import StarRating from './StarRating';
 import ReviewForm from './ReviewForm';
 import ReviewCard from './ReviewCard';
 import ReviewSummary from './ReviewSummary';
+import { useAuth } from '../AuthContext';
 import { Plus, Filter, SortAsc, Search, X } from 'lucide-react';
 
 const Reviews = ({ business }) => {
+  const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [reviewSummary, setReviewSummary] = useState({
     averageRating: 0,
@@ -262,13 +264,30 @@ const Reviews = ({ business }) => {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Arvustused</h2>
-        <button
-          onClick={() => setShowReviewForm(true)}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="h-5 w-5" />
-          <span>Lisa arvustus</span>
-        </button>
+        {user ? (
+          <button
+            onClick={() => setShowReviewForm(true)}
+            className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="h-5 w-5" />
+            <span>Lisa arvustus</span>
+          </button>
+        ) : (
+          <div className="text-center">
+            <p className="text-gray-600 text-sm mb-2">Arvustuste lisamiseks logi sisse</p>
+            <button
+              onClick={() => {
+                // Could open auth modal here
+                alert('Palun logi esmalt sisse, et arvustust lisada!');
+              }}
+              className="flex items-center space-x-2 bg-gray-400 text-white px-6 py-3 rounded-lg cursor-not-allowed"
+              disabled
+            >
+              <Plus className="h-5 w-5" />
+              <span>Lisa arvustus</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Review Summary */}
@@ -368,12 +387,22 @@ const Reviews = ({ business }) => {
               {hasActiveFilters ? 'Filtritele vastavaid arvustusi ei leitud.' : 'Veel arvustusi pole.'}
             </p>
             {!hasActiveFilters && (
-              <button
-                onClick={() => setShowReviewForm(true)}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Ole esimene, kes arvustab!
-              </button>
+              user ? (
+                <button
+                  onClick={() => setShowReviewForm(true)}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Ole esimene, kes arvustab!
+                </button>
+              ) : (
+                <button
+                  onClick={() => alert('Palun logi esmalt sisse, et arvustust lisada!')}
+                  className="bg-gray-400 text-white px-6 py-3 rounded-lg cursor-not-allowed"
+                  disabled
+                >
+                  Logi sisse arvustamiseks
+                </button>
+              )
             )}
           </div>
         ) : (
@@ -389,8 +418,8 @@ const Reviews = ({ business }) => {
         )}
       </div>
 
-      {/* Review Form Modal */}
-      {showReviewForm && (
+      {/* Review Form Modal - Only for authenticated users */}
+      {showReviewForm && user && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <ReviewForm
