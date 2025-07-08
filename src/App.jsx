@@ -1417,7 +1417,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
       )}
 
       {/* Auth Modal */}
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+      <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
 
       {/* Business Detail Modal */}
       {showBusinessDetail && selectedBusiness && (
