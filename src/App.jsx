@@ -13,6 +13,7 @@ import WidgetPage from './pages/WidgetPage';
 import { useSubscription } from './hooks/useSubscription';
 import { useAuth } from './AuthContext';
 import { supabase } from './supabaseClient';
+import AuthModal from './components/AuthModal';
 
 const HomePage = () => {
   const { t, i18n } = useTranslation();
@@ -82,16 +83,13 @@ After changing plan, open "Lisää yritys" modal to see the changes!
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnnually, setIsAnnually] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [showBusinessDetail, setShowBusinessDetail] = useState(false);
   const languageDropdownRef = useRef(null);
-  const authDropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -114,13 +112,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
     termsConditions: false
   });
 
-  const [authFormData, setAuthFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: ''
-  });
+
 
   // State päris äride jaoks
   const [businesses, setBusinesses] = useState([]);
@@ -305,37 +297,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
     });
   };
 
-  const openLoginModal = () => {
-    setIsLoginModalOpen(true);
-    setIsAuthDropdownOpen(false);
-  };
 
-  const openRegisterModal = () => {
-    setIsRegisterModalOpen(true);
-    setIsAuthDropdownOpen(false);
-  };
-
-  const closeAuthModals = () => {
-    setIsLoginModalOpen(false);
-    setIsRegisterModalOpen(false);
-    setAuthFormData({
-      email: '',
-      password: '',
-      confirmPassword: '',
-      firstName: '',
-      lastName: ''
-    });
-  };
-
-  const switchToRegister = () => {
-    setIsLoginModalOpen(false);
-    setIsRegisterModalOpen(true);
-  };
-
-  const switchToLogin = () => {
-    setIsRegisterModalOpen(false);
-    setIsLoginModalOpen(true);
-  };
 
   const handleInputChange = (e) => {
     const { name, type, checked, files } = e.target;
@@ -353,13 +315,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
     }));
   };
 
-  const handleAuthInputChange = (e) => {
-    const { name, value } = e.target;
-    setAuthFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -476,59 +432,7 @@ After changing plan, open "Lisää yritys" modal to see the changes!
     }
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    
-    // Validation
-    if (!authFormData.email) {
-      alert(t('auth.emailRequired'));
-      return;
-    }
-    if (!authFormData.password) {
-      alert(t('auth.passwordRequired'));
-      return;
-    }
 
-    // Here you would handle login logic
-    console.log('Login attempt:', { email: authFormData.email });
-    alert('Login successful!');
-    closeAuthModals();
-  };
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    
-    // Validation
-    if (!authFormData.firstName) {
-      alert(t('auth.firstNameRequired'));
-      return;
-    }
-    if (!authFormData.lastName) {
-      alert(t('auth.lastNameRequired'));
-      return;
-    }
-    if (!authFormData.email) {
-      alert(t('auth.emailRequired'));
-      return;
-    }
-    if (!authFormData.password) {
-      alert(t('auth.passwordRequired'));
-      return;
-    }
-    if (authFormData.password !== authFormData.confirmPassword) {
-      alert(t('auth.passwordsDontMatch'));
-      return;
-    }
-
-    // Here you would handle registration logic
-    console.log('Registration attempt:', { 
-      firstName: authFormData.firstName,
-      lastName: authFormData.lastName,
-      email: authFormData.email 
-    });
-    alert('Registration successful!');
-    closeAuthModals();
-  };
 
   const changeLanguage = (language) => {
     i18n.changeLanguage(language);
@@ -700,9 +604,6 @@ After changing plan, open "Lisää yritys" modal to see the changes!
       if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target)) {
         setIsLanguageOpen(false);
       }
-      if (authDropdownRef.current && !authDropdownRef.current.contains(event.target)) {
-        setIsAuthDropdownOpen(false);
-      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -781,34 +682,24 @@ After changing plan, open "Lisää yritys" modal to see the changes!
                 )}
               </div>
               
-              {/* Auth Dropdown */}
-              <div className="relative" ref={authDropdownRef}>
+              {/* Auth Section */}
+              {!user ? (
                 <button
-                  onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)}
+                  onClick={() => setShowAuth(true)}
                   className="flex items-center space-x-2 text-sm hover:text-gray-300 transition-colors"
                 >
                   <span>👤</span>
-                  <span>{t('auth.login')}</span>
-                  <ChevronDown size={16} />
+                  <span>Kirjaudu</span>
                 </button>
-                
-                {isAuthDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg py-2 z-10">
-                    <button
-                      onClick={openLoginModal}
-                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      {t('auth.login')}
-                    </button>
-                    <button
-                      onClick={openRegisterModal}
-                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      {t('auth.register')}
-                    </button>
-                  </div>
-                )}
-              </div>
+              ) : (
+                <button
+                  onClick={async () => { await supabase.auth.signOut(); }}
+                  className="flex items-center space-x-2 text-sm hover:text-gray-300 transition-colors"
+                >
+                  <span>👤</span>
+                  <span>Logi välja</span>
+                </button>
+              )}
 
               <button 
                 onClick={openModal}
@@ -1525,207 +1416,8 @@ After changing plan, open "Lisää yritys" modal to see the changes!
         </div>
       )}
 
-      {/* Login Modal */}
-      {isLoginModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-800">{t('auth.loginTitle')}</h2>
-              <button 
-                onClick={closeAuthModals}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <form onSubmit={handleLogin} className="p-6">
-              <div className="space-y-4">
-                {/* Email */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('auth.email')} *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={authFormData.email}
-                    onChange={handleAuthInputChange}
-                    placeholder={t('auth.email')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('auth.password')} *
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={authFormData.password}
-                    onChange={handleAuthInputChange}
-                    placeholder={t('auth.password')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="flex flex-col space-y-4 mt-6 pt-4 border-t">
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {t('auth.loginButton')}
-                </button>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    {t('auth.noAccount')}{' '}
-                    <button
-                      type="button"
-                      onClick={switchToRegister}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      {t('auth.register')}
-                    </button>
-                  </p>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Register Modal */}
-      {isRegisterModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-800">{t('auth.registerTitle')}</h2>
-              <button 
-                onClick={closeAuthModals}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <form onSubmit={handleRegister} className="p-6">
-              <div className="space-y-4">
-                {/* First Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('auth.firstName')} *
-                  </label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={authFormData.firstName}
-                    onChange={handleAuthInputChange}
-                    placeholder={t('auth.firstName')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                {/* Last Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('auth.lastName')} *
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={authFormData.lastName}
-                    onChange={handleAuthInputChange}
-                    placeholder={t('auth.lastName')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('auth.email')} *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={authFormData.email}
-                    onChange={handleAuthInputChange}
-                    placeholder={t('auth.email')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('auth.password')} *
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={authFormData.password}
-                    onChange={handleAuthInputChange}
-                    placeholder={t('auth.password')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('auth.confirmPassword')} *
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={authFormData.confirmPassword}
-                    onChange={handleAuthInputChange}
-                    placeholder={t('auth.confirmPassword')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="flex flex-col space-y-4 mt-6 pt-4 border-t">
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {t('auth.registerButton')}
-                </button>
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    {t('auth.haveAccount')}{' '}
-                    <button
-                      type="button"
-                      onClick={switchToLogin}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      {t('auth.login')}
-                    </button>
-                  </p>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Auth Modal */}
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
 
       {/* Business Detail Modal */}
       {showBusinessDetail && selectedBusiness && (
