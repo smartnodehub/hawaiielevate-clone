@@ -89,6 +89,13 @@ After changing plan, open "Lisää yritys" modal to see the changes!
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  
+  // Search state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMunicipality, setSelectedMunicipality] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const languageDropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -436,7 +443,80 @@ After changing plan, open "Lisää yritys" modal to see the changes!
 
   const changeLanguage = (language) => {
     i18n.changeLanguage(language);
+    localStorage.setItem('selectedLanguage', language);
     setIsLanguageOpen(false);
+  };
+
+  // Search functions
+  const handleSearch = async () => {
+    setIsSearching(true);
+    console.log('🔍 SEARCH:', { searchTerm, selectedMunicipality, selectedCategory });
+    
+    try {
+      let query = supabase
+        .from('businesses')
+        .select('*')
+        .eq('status', 'approved'); // Only show approved businesses
+      
+      // Apply filters
+      if (searchTerm) {
+        query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`);
+      }
+      
+      if (selectedMunicipality && selectedMunicipality !== t('hero.allMunicipalities')) {
+        query = query.eq('municipality', selectedMunicipality);
+      }
+      
+      if (selectedCategory && selectedCategory !== t('hero.allCategories')) {
+        query = query.eq('category', selectedCategory);
+      }
+      
+      const { data, error } = await query.limit(20);
+      
+      if (error) {
+        console.error('Search error:', error);
+        // Fallback to sample data with filters
+        let filteredResults = sampleBusinesses;
+        
+        if (searchTerm) {
+          filteredResults = filteredResults.filter(business => 
+            business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            business.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            business.category.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+        
+        if (selectedMunicipality && selectedMunicipality !== t('hero.allMunicipalities')) {
+          filteredResults = filteredResults.filter(business => 
+            business.municipality === selectedMunicipality
+          );
+        }
+        
+        if (selectedCategory && selectedCategory !== t('hero.allCategories')) {
+          filteredResults = filteredResults.filter(business => 
+            business.category === selectedCategory
+          );
+        }
+        
+        setSearchResults(filteredResults);
+        console.log('📊 Search results (fallback):', filteredResults);
+      } else {
+        setSearchResults(data || []);
+        console.log('📊 Search results (Supabase):', data);
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    setSelectedMunicipality('');
+    setSelectedCategory('');
+    setSearchResults([]);
   };
 
   const languages = [
@@ -718,27 +798,91 @@ After changing plan, open "Lisää yritys" modal to see the changes!
           <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
             <input
               type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t('hero.searchPlaceholder')}
               className="flex-1 px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             />
-            <select className="px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
-              <option>{t('hero.allMunicipalities')}</option>
+            <select 
+              value={selectedMunicipality}
+              onChange={(e) => setSelectedMunicipality(e.target.value)}
+              className="px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            >
+              <option value="">{t('hero.allMunicipalities')}</option>
               {kunnat.map(kunta => (
-                <option key={kunta}>{kunta}</option>
+                <option key={kunta} value={kunta}>{kunta}</option>
               ))}
             </select>
-            <select className="px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black">
-              <option>{t('hero.allCategories')}</option>
+            <select 
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-6 py-4 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            >
+              <option value="">{t('hero.allCategories')}</option>
               {kategoriad.map(kategoria => (
-                <option key={kategoria}>{kategoria}</option>
+                <option key={kategoria} value={kategoria}>{kategoria}</option>
               ))}
             </select>
-            <button className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
-              {t('hero.searchButton')}
+            <button 
+              onClick={handleSearch}
+              disabled={isSearching}
+              className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {isSearching ? 'Otsing...' : t('hero.searchButton')}
             </button>
           </div>
         </div>
       </section>
+
+      {/* Search Results Section */}
+      {searchResults.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800">
+                Otsingutulemuseid: {searchResults.length}
+              </h2>
+              <button 
+                onClick={clearSearch}
+                className="text-blue-600 hover:text-blue-800 font-semibold"
+              >
+                Tühista otsing ×
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {searchResults.map((business) => (
+                <div
+                  key={business.id}
+                  onClick={() => navigate(`/business/${business.id}`)}
+                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+                >
+                  {business.image && (
+                    <div 
+                      className="h-48 bg-cover bg-center" 
+                      style={{ backgroundImage: `url(${business.image})` }}
+                    ></div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{business.name}</h3>
+                    <p className="text-sm text-blue-600 font-semibold mb-2">{business.category}</p>
+                    <p className="text-sm text-gray-600 mb-2">📍 {business.municipality}</p>
+                    <p className="text-gray-700 text-sm line-clamp-3">{business.description}</p>
+                    {business.averageRating && (
+                      <div className="flex items-center mt-4">
+                        <span className="text-yellow-400">⭐</span>
+                        <span className="ml-1 font-semibold">{business.averageRating}</span>
+                        <span className="ml-1 text-gray-600 text-sm">({business.totalReviews} hinnangut)</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Businesses by Tags Carousel */}
       <section className="py-20 bg-gray-50">

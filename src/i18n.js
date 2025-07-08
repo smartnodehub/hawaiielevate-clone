@@ -25,6 +25,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'fi',
+    lng: 'fi', // Force default language
     debug: false,
     
     interpolation: {
@@ -32,8 +33,10 @@ i18n
     },
     
     detection: {
-      order: ['localStorage', 'browserLanguage', 'htmlTag', 'path', 'subdomain'],
+      order: ['localStorage', 'querystring', 'htmlTag'],
       caches: ['localStorage'],
+      lookupQuerystring: 'lang',
+      lookupLocalStorage: 'selectedLanguage'
     }
   });
 

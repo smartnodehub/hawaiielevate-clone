@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Phone, Mail, MapPin, Star, Users, Award, Heart, X } from 'lucide-react';
+import { getPlansByLanguage } from './data/plans';
 
 const PricingPage = () => {
   const { t, i18n } = useTranslation();
+  
+  // Get plans for current language
+  const plansConfig = getPlansByLanguage(i18n.language);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnnually, setIsAnnually] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -369,11 +373,11 @@ const PricingPage = () => {
       <section id="pricing" className="py-20 bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">{t('pricing.title')}</h2>
+            <h2 className="text-4xl font-bold text-gray-800 mb-6">{plansConfig.title}</h2>
             
             {/* Monthly/Annually Toggle */}
             <div className="flex justify-center items-center space-x-4 mb-12">
-              <span className="text-lg font-medium text-blue-600">{t('pricing.monthly')}</span>
+              <span className="text-lg font-medium text-blue-600">{plansConfig.monthly}</span>
               <div className="relative">
                 <input type="checkbox" className="sr-only" />
                 <div className="w-12 h-6 bg-gray-300 rounded-full cursor-pointer"></div>
