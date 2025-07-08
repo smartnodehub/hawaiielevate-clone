@@ -11,8 +11,8 @@ import SeasonalSection from './components/SeasonalSection';
 import TodayPage from './pages/TodayPage';
 import WidgetPage from './pages/WidgetPage';
 import { useSubscription } from './hooks/useSubscription';
-import { useAuth } from './hooks/useAuth';
-import { supabase } from './lib/supabase';
+import { useAuth } from './AuthContext';
+import { supabase } from './supabaseClient';
 
 const HomePage = () => {
   const { t, i18n } = useTranslation();
