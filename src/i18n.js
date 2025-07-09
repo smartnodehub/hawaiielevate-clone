@@ -1,42 +1,42 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Import language files
-import fi from './locales/fi.json';
-import en from './locales/en.json';
-import sv from './locales/sv.json';
+// Import translation files
+import translationFI from './locales/fi.json';
+import translationEN from './locales/en.json';
+import translationSV from './locales/sv.json';
 
 const resources = {
   fi: {
-    translation: fi
+    translation: translationFI
   },
   en: {
-    translation: en
+    translation: translationEN
   },
   sv: {
-    translation: sv
+    translation: translationSV
   }
 };
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
+    lng: 'fi', // default language
     fallbackLng: 'fi',
-    lng: 'fi', // Force default language
     debug: false,
-    
+
     interpolation: {
-      escapeValue: false,
+      escapeValue: false, // not needed for react as it escapes by default
     },
-    
-    detection: {
-      order: ['localStorage', 'querystring', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupQuerystring: 'lang',
-      lookupLocalStorage: 'selectedLanguage'
+
+    react: {
+      bindI18n: 'languageChanged',
+      bindI18nStore: '',
+      transEmptyNodeValue: '',
+      transSupportBasicHtmlNodes: true,
+      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i'],
+      useSuspense: false,
     }
   });
 

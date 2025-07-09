@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Navbar from '../components/Navbar';
 
 const SEASONS = [
   {
@@ -122,6 +123,7 @@ export default function SeasonsListPage() {
 
   return (
     <>
+      <Navbar openModal={() => {}} setShowAuth={() => {}} />
       <div className="min-h-screen bg-gray-50">
         {/* Hero */}
         <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">

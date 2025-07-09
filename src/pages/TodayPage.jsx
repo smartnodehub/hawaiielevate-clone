@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, Sparkles } from 'lucide-react';
 import AdvancedWidgetDemo from '../components/AdvancedWidgetDemo';
+import Navbar from '../components/Navbar';
 
 const TodayPage = () => {
   const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar openModal={() => {}} setShowAuth={() => {}} />
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">

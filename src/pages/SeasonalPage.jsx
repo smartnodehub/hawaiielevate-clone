@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 // Season configuration
 const SEASONS = [
@@ -338,6 +339,7 @@ const SeasonalPage = () => {
 
   return (
     <>
+      <Navbar openModal={() => {}} setShowAuth={() => {}} />
       {/* Hero Section */}
       <section className={`relative py-16 text-center bg-gradient-to-b ${seasonConfig.bgGradient} overflow-hidden`}>
         {/* Decorative elements */}

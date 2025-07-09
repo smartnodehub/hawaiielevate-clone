@@ -5,6 +5,7 @@ import { useAuth } from "../AuthContext";
 import { supabase } from "../supabaseClient";
 import Reviews from "../components/Reviews";
 import StarRating from "../components/StarRating";
+import Navbar from "../components/Navbar";
 
 const BusinessDetailPage = () => {
   const { id } = useParams();
@@ -62,6 +63,7 @@ const BusinessDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar openModal={() => {}} setShowAuth={() => {}} />
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
         <div className="container mx-auto px-4 py-6">

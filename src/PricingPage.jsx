@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Phone, Mail, MapPin, Star, Users, Award, Heart, X } from 'lucide-react';
-import { getPlansByLanguage } from './data/plans';
+import Navbar from './components/Navbar';
+import { plans } from './data/plans';
 
 const PricingPage = () => {
   const { t, i18n } = useTranslation();
-  
-  // Get plans for current language
-  const plansConfig = getPlansByLanguage(i18n.language);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnnually, setIsAnnually] = useState(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const languageDropdownRef = useRef(null);
   const authDropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     nimi: '',
@@ -244,24 +240,10 @@ const PricingPage = () => {
     closeAuthModals();
   };
 
-  const changeLanguage = (language) => {
-    i18n.changeLanguage(language);
-    setIsLanguageOpen(false);
-  };
 
-  const languages = [
-    { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'sv', name: 'Svenska', flag: '🇸🇪' }
-  ];
-
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target)) {
-        setIsLanguageOpen(false);
-      }
       if (authDropdownRef.current && !authDropdownRef.current.contains(event.target)) {
         setIsAuthDropdownOpen(false);
       }
@@ -275,109 +257,17 @@ const PricingPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-gray-800 text-white sticky top-0 z-40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded flex items-center justify-center">
-                <span className="text-black font-bold text-lg">↗</span>
-              </div>
-              <a href="/" className="text-2xl font-bold hover:text-yellow-400 transition-colors">YRITTÄJÄPOLKU</a>
-            </div>
-            
-            <nav className="hidden md:flex space-x-8">
-              <a href="/" className="text-gray-300 hover:text-white transition-colors">{t('nav.home')}</a>
-              <a href="#services" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
-              <a href="#restaurants" className="text-gray-300 hover:text-white transition-colors">{t('nav.restaurants')}</a>
-              <a href="#designers" className="text-gray-300 hover:text-white transition-colors">{t('nav.services')}</a>
-              <a href="/today" className="text-gray-300 hover:text-white transition-colors">{t('what_to_do_today')}</a>
-              <a href="#todo" className="text-gray-300 hover:text-white transition-colors">{t('nav.tours')}</a>
-              <a href="/pricing" className="text-blue-400 hover:text-white transition-colors">{t('nav.pricing')}</a>
-              <a href="#about" className="text-gray-300 hover:text-white transition-colors">{t('nav.about')}</a>
-              <a href="#contact" className="text-gray-300 hover:text-white transition-colors">{t('nav.contact')}</a>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <span className="text-sm">📞 (808) 555-0123</span>
-              
-              {/* Language Switcher */}
-              <div className="relative" ref={languageDropdownRef}>
-                <button
-                  onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                  className="flex items-center space-x-2 text-sm hover:text-gray-300 transition-colors"
-                >
-                  <span>🌐</span>
-                  <span>{currentLanguage.flag}</span>
-                  <span>{currentLanguage.name}</span>
-                  <ChevronDown size={16} />
-                </button>
-                
-                {isLanguageOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg py-2 z-10">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => changeLanguage(lang.code)}
-                        className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        <span>{lang.flag}</span>
-                        <span>{lang.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              {/* Auth Dropdown */}
-              <div className="relative" ref={authDropdownRef}>
-                <button
-                  onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)}
-                  className="flex items-center space-x-2 text-sm hover:text-gray-300 transition-colors"
-                >
-                  <span>👤</span>
-                  <span>{t('auth.login')}</span>
-                  <ChevronDown size={16} />
-                </button>
-                
-                {isAuthDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg py-2 z-10">
-                    <button
-                      onClick={openLoginModal}
-                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      {t('auth.login')}
-                    </button>
-                    <button
-                      onClick={openRegisterModal}
-                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      {t('auth.register')}
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <button 
-                onClick={openModal}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
-              >
-                {t('addBusiness')}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar openModal={openModal} setShowAuth={() => {}} />
 
       {/* Pricing Section */}
       <section id="pricing" className="py-20 bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">{plansConfig.title}</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">{t('pricing.title')}</h2>
             
             {/* Monthly/Annually Toggle */}
             <div className="flex justify-center items-center space-x-4 mb-12">
-              <span className="text-lg font-medium text-blue-600">{plansConfig.monthly}</span>
+              <span className="text-lg font-medium text-blue-600">{t('pricing.monthly')}</span>
               <div className="relative">
                 <input type="checkbox" className="sr-only" />
                 <div className="w-12 h-6 bg-gray-300 rounded-full cursor-pointer"></div>
@@ -393,7 +283,7 @@ const PricingPage = () => {
             <div className="bg-white rounded-lg shadow-lg p-8 relative">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">{t('pricing.plans.free.name')}</h3>
-                <div className="text-4xl font-bold text-gray-800 mb-1">{t('pricing.plans.free.price')}</div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">{t('pricing.plans.free.price')}</div>
                 <div className="text-gray-600">{t('pricing.plans.free.period')}</div>
               </div>
               
@@ -513,7 +403,7 @@ const PricingPage = () => {
             <div className="bg-blue-600 text-white rounded-lg shadow-lg p-8 relative transform scale-105">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold mb-2">{t('pricing.plans.capitalPremium.name')}</h3>
-                <div className="text-4xl font-bold mb-1">{t('pricing.plans.capitalPremium.price')}</div>
+                <div className="text-3xl font-bold mb-1">{t('pricing.plans.capitalPremium.price')}</div>
                 <div className="text-blue-100">{t('pricing.plans.capitalPremium.period')}</div>
               </div>
               
@@ -633,7 +523,7 @@ const PricingPage = () => {
             <div className="bg-white rounded-lg shadow-lg p-8 relative">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">{t('pricing.plans.goldenPremium.name')}</h3>
-                <div className="text-4xl font-bold text-gray-800 mb-1">{t('pricing.plans.goldenPremium.price')}</div>
+                <div className="text-3xl font-bold text-gray-800 mb-1">{t('pricing.plans.goldenPremium.price')}</div>
                 <div className="text-gray-600">{t('pricing.plans.goldenPremium.period')}</div>
               </div>
               
